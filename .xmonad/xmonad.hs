@@ -1,7 +1,7 @@
 import XMonad
 import XMonad.Util.Run
 import XMonad.Hooks.DynamicLog
-import XMonad.Util.EZConfig(additionalKeys)
+import XMonad.Util.EZConfig
 import XMonad.Hooks.ManageDocks
 
 main = do
@@ -15,6 +15,10 @@ main = do
                 , ppTitle = xmobarColor "green" "" . shorten 50
                 }
     , terminal = "xterm"
-    } `additionalKeys`
-    [ -- ((mod4Mask .|. shiftMask, xK_z), spawn "xscreensaver-command -lock")
-    ]
+    } `additionalKeysP` myKeys
+    
+
+myKeys =
+  [ ("M-x", spawn "xmessage 'Hello XMonad'")
+  , ("M-S-l", spawn "dm-tool lock")
+  ]
