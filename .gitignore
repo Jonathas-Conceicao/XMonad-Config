@@ -1,3 +1,4 @@
+# Default Haskell ignore
 dist
 dist-*
 cabal-dev
@@ -20,3 +21,9 @@ cabal.project.local
 cabal.project.local~
 .HTF/
 .ghc.environment.*
+
+# xmonad files
+xmonad.errors
+xmonad.state
+xmonad-x86_64-linux
+
