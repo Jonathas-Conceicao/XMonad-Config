@@ -3,8 +3,10 @@ import XMonad.Util.Run
 import XMonad.Hooks.DynamicLog
 import XMonad.Util.EZConfig
 import XMonad.Hooks.ManageDocks
+import XMonad.Actions.CycleWS
 
 main = do
+  spawnPipe "$HOME/.xsession"
   xmproc <- spawnPipe "xmobar $HOME/.xmonad/xmobarrc.hs"
   xmonad $ docks def
     { modMask = mod4Mask -- Use Super instead of Alt
@@ -21,4 +23,5 @@ main = do
 myKeys =
   [ ("M-x", spawn "xmessage 'Hello XMonad'")
   , ("M-S-l", spawn "dm-tool lock")
+  , ("M-S-<Tab>", nextScreen)
   ]
