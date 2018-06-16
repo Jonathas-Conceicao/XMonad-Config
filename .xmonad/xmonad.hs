@@ -9,6 +9,7 @@ import XMonad.Hooks.ManageDocks
 import XMonad.Actions.CycleWS
 import XMonad.Actions.Volume
 
+import System.IO
 
 main :: IO ()
 main = do
@@ -25,10 +26,29 @@ myStartupHook = do
   spawnOnce "xmobar $HOME/.xmonad/xmobarrc.hs"
 
 myKeys =
-  [ ("M-x", spawn "xmessage 'Hello XMonad'")
-  , ("M-S-l", spawn "dm-tool lock")
+  [ ("M-x"  , safeSpawnProg "xmessage 'Hello XMonad'")
+  , ("M-S-l", safeSpawnProg "dm-tool lock")
+
   , ("M-S-<Tab>", nextScreen)
+
   , ("<XF86AudioLowerVolume>", lowerVolume 3 >> return ())
   , ("<XF86AudioRaiseVolume>", raiseVolume 3 >> return ())
   , ("<XF86AudioMute>"       , toggleMute    >> return ())
+
+  , ("<XF86MonBrightnessDown>", setBright (\x -> x - 50))
+  , ("<XF86MonBrightnessUp>"  , setBright (\x -> x + 50))
+  , ("<XF86KbdLightOnOff>"    , setBright (\_ ->     50))
+  , ("<XF86HomePage>"         , setBright (\x -> x + 50))
+  , ("<XF86Mail>"             , setBright (\x -> x - 50))
   ]
+
+brightFile :: FilePath
+brightFile = "/sys/class/backlight/intel_backlight/brightness"
+
+setBright :: (Int -> Int) -> X ()
+setBright f = liftIO $ withFile brightFile ReadWriteMode $ alterFile f
+
+alterFile :: (Show a, Read a) => (a -> a) -> Handle -> IO ()
+alterFile f h = do
+  curr <- hGetLine h
+  hPutStrLn h $ show $ f $ read curr
