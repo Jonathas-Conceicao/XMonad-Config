@@ -7,6 +7,8 @@ import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 
 import XMonad.Actions.CycleWS
+import XMonad.Actions.Volume
+
 
 main :: IO ()
 main = do
@@ -26,4 +28,7 @@ myKeys =
   [ ("M-x", spawn "xmessage 'Hello XMonad'")
   , ("M-S-l", spawn "dm-tool lock")
   , ("M-S-<Tab>", nextScreen)
+  , ("<XF86AudioLowerVolume>", lowerVolume 3 >> return ())
+  , ("<XF86AudioRaiseVolume>", raiseVolume 3 >> return ())
+  , ("<XF86AudioMute>"       , toggleMute    >> return ())
   ]
