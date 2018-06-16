@@ -1,24 +1,26 @@
 import XMonad
 import XMonad.Util.Run
-import XMonad.Hooks.DynamicLog
 import XMonad.Util.EZConfig
+import XMonad.Util.SpawnOnce
+
+import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
+
 import XMonad.Actions.CycleWS
 
+main :: IO ()
 main = do
-  spawnPipe "$HOME/.xsession"
-  xmproc <- spawnPipe "xmobar $HOME/.xmonad/xmobarrc.hs"
+  safeSpawnProg "$HOME/.xsession"
   xmonad $ docks def
-    { modMask = mod4Mask -- Use Super instead of Alt
-    , manageHook = manageDocks <+> manageHook def
-    , layoutHook = avoidStruts  $  layoutHook def
-    , logHook = dynamicLogWithPP xmobarPP
-                { ppOutput = hPutStrLn xmproc
-                , ppTitle = xmobarColor "green" "" . shorten 50
-                }
-    , terminal = "xterm"
-    } `additionalKeysP` myKeys
-    
+      { modMask = mod4Mask -- Use Super instead of Alt
+      , startupHook = myStartupHook
+      , manageHook = manageDocks <+> manageHook def
+      , layoutHook = avoidStruts  $  layoutHook def
+      , terminal = "/usr/bin/gnome-terminal"
+      } `additionalKeysP` myKeys
+
+myStartupHook = do
+  spawnOnce "xmobar $HOME/.xmonad/xmobarrc.hs"
 
 myKeys =
   [ ("M-x", spawn "xmessage 'Hello XMonad'")
