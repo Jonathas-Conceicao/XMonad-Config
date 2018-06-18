@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 import XMonad
 import XMonad.Util.Run
 import XMonad.Util.EZConfig
@@ -8,7 +9,11 @@ import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
 
 import XMonad.Actions.CycleWS
+
+#ifdef MIN_VERSION_xmonad_extras /* Any version will do it */
+#define XMonadExtras
 import XMonad.Actions.Volume
+#endif
 
 import System.IO
 
@@ -38,9 +43,11 @@ myKeys =
 
   , ("M-S-<Tab>", nextScreen)
 
+#ifdef XMonadExtras
   , ("<XF86AudioLowerVolume>", lowerVolume 3 >> return ())
   , ("<XF86AudioRaiseVolume>", raiseVolume 3 >> return ())
   , ("<XF86AudioMute>"       , toggleMute    >> return ())
+#endif
 
   , ("<XF86MonBrightnessDown>", setBright (\x -> x - 50))
   , ("<XF86MonBrightnessUp>"  , setBright (\x -> x + 50))
