@@ -19,7 +19,6 @@ import System.IO
 
 main :: IO ()
 main = do
-  safeSpawnProg "$HOME/.xsession"
   xmonad $ docks def
     { modMask = mod4Mask -- Use Super instead of Alt
     , startupHook = myStartupHook
@@ -29,7 +28,7 @@ main = do
     } `additionalKeysP` myKeys
 
 myStartupHook = do
-  safeSpawnProg "xmobar $HOME/.xmonad/xmobarrc.hs"
+  safeSpawn "xmobar" ["/home/jonathas/.xmonad/xmobarrc.hs"]
 
 myManageHook = composeAll
   [ manageDocks
@@ -38,8 +37,8 @@ myManageHook = composeAll
   ]
 
 myKeys =
-  [ ("M-x"  , safeSpawnProg "xmessage 'Hello XMonad'")
-  , ("M-S-l", safeSpawnProg "dm-tool lock")
+  [ ("M-x"  , safeSpawn "xmessage" ["\"Hello XMonad\""])
+  , ("M-S-l", safeSpawn "dm-tool" ["lock"])
 
   , ("M-S-<Tab>", nextScreen)
 
