@@ -7,6 +7,7 @@ import XMonad.Util.SpawnOnce
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
+import XMonad.Hooks.EwmhDesktops
 
 import XMonad.Actions.CycleWS
 
@@ -19,11 +20,12 @@ import System.IO
 
 main :: IO ()
 main = do
-  xmonad $ docks def
+  xmonad $ docks $ ewmh def
     { modMask = mod4Mask -- Use Super instead of Alt
     , startupHook = myStartupHook
     , manageHook = myManageHook
     , layoutHook = avoidStruts  $  layoutHook def
+    , handleEventHook = fullscreenEventHook
     , terminal = "/usr/bin/gnome-terminal"
     } `additionalKeysP` myKeys
 
@@ -32,7 +34,6 @@ myStartupHook = do
 
 myManageHook = composeAll
   [ manageDocks
-  , isFullscreen --> doFullFloat
   , manageHook def
   ]
 
