@@ -30,7 +30,7 @@ main = do
     } `additionalKeysP` myKeys
 
 myStartupHook = do
-  safeSpawn "xmobar" ["/home/jonathas/.xmonad/xmobarrc.hs"]
+  spawnOnce "xmobar /home/?onathas/.xmonad/xmobarrc.hs"
 
 myManageHook = composeAll
   [ manageDocks
