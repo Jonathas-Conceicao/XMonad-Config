@@ -39,21 +39,38 @@ myManageHook = composeAll
 
 myKeys =
   [ ("M-x"  , safeSpawn "xmessage" ["\"Hello XMonad\""])
+
   , ("M-S-l", safeSpawn "dm-tool" ["lock"])
 
   , ("M-S-<Tab>", nextScreen)
 
+  , ("<Print>"    , safeSpawn "gnome-screenshot" [])
+  , ("S-<Print>"  , safeSpawn "gnome-screenshot" ["--area"])
+  , ("M-<Print>"  , safeSpawn "gnome-screenshot" ["--window"])
+  , ("C-S-<Print>", safeSpawn "gnome-screenshot" ["--window"])
+
 #ifdef XMonadExtras
   , ("<XF86AudioLowerVolume>", lowerVolume 3 >> return ())
+  , ("M-S-<F2>"              , lowerVolume 3 >> return ())
+
   , ("<XF86AudioRaiseVolume>", raiseVolume 3 >> return ())
+  , ("M-S-<F3>"              , raiseVolume 3 >> return ())
+
   , ("<XF86AudioMute>"       , toggleMute    >> return ())
+  , ("M-S-<F4>"              , toggleMute    >> return ())
 #endif
 
   , ("<XF86MonBrightnessDown>", setBright (\x -> x - 50))
-  , ("<XF86MonBrightnessUp>"  , setBright (\x -> x + 50))
-  , ("<XF86KbdLightOnOff>"    , setBright (\_ ->     50))
-  , ("<XF86HomePage>"         , setBright (\x -> x + 50))
   , ("<XF86Mail>"             , setBright (\x -> x - 50))
+  , ("M-S-<F9>"               , setBright (\x -> x - 50))
+
+  , ("<XF86MonBrightnessUp>"  , setBright (\x -> x + 50))
+  , ("<XF86HomePage>"         , setBright (\x -> x + 50))
+  , ("M-S-<F10>"              , setBright (\x -> x + 50))
+
+  , ("<XF86KbdLightOnOff>"    , setBright (\_ ->     20))
+  , ("<XF86Calculator>"       , setBright (\_ ->     20))
+  , ("M-S-<F12>"              , setBright (\_ ->     20))
   ]
 
 brightFile :: FilePath
