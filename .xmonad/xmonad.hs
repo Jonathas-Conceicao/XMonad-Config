@@ -11,6 +11,8 @@ import XMonad.Hooks.EwmhDesktops
 
 import XMonad.Actions.CycleWS
 
+import XMonad.Hooks.SetWMName
+
 #ifdef MIN_VERSION_xmonad_extras /* Any version will do it */
 #define XMonadExtras
 import XMonad.Actions.Volume
@@ -22,7 +24,7 @@ main :: IO ()
 main = do
   xmonad $ docks $ ewmh def
     { modMask = mod4Mask -- Use Super instead of Alt
-    , startupHook = myStartupHook
+    , startupHook = setWMName "LG3D" >> myStartupHook
     , manageHook = myManageHook
     , layoutHook = avoidStruts  $  layoutHook def
     , handleEventHook = fullscreenEventHook
@@ -30,7 +32,7 @@ main = do
     } `additionalKeysP` myKeys
 
 myStartupHook = do
-  safeSpawn "xmobar" ["/home/?onathas/.xmonad/xmobarrc.hs"]
+  unsafeSpawn "xmobar /home/?onathas/.xmonad/xmobarrc.hs"
 
 myManageHook = composeAll
   [ manageDocks
