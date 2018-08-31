@@ -37,6 +37,7 @@ myStartupHook = do
 myManageHook = composeAll
   [ manageDocks
   , manageHook def
+  , className =? "dota2" --> doIgnore
   ]
 
 myKeys =
