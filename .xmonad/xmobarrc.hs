@@ -36,6 +36,6 @@ Config { font = "-misc-fixed-*-*-*-*-14-*-*-*-*-*-*-*"
          \{ <fc=#ee9a00>%date%</fc> \
          \| <action=`xdotool key \-\-clearmodifiers Super_L+Tab`>%SBPK%</action> \
          \| <action=`xdotool key \-\-clearmodifiers Super_L+Shift_L+Return`>%uname%</action> \
-         \| <action=`xdotool key \-\-clearmodifiers Super_L+Shift_L+c`><fc=#8B0000>[X]</fc></action>"
+         \| <action=`xdotool key \-\-clearmodifiers Super_L+Shift_L+c`><fc=#FF0000>[X]</fc></action>"
        }
 
