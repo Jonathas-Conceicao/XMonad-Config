@@ -32,5 +32,8 @@ Config { font = "-misc-fixed-*-*-*-*-14-*-*-*-*-*-*-*"
        , sepChar = "%"
        , alignSep = "}{"
        , template = "%cpu% | %memory% * %swap% | %wlp3s0% }\
-                    \{ <fc=#ee9a00>%date%</fc>| %SBPK% | %uname%"
+                    \{ <fc=#ee9a00>%date%</fc>\
+                    \| <action=`xdotool key \-\-clearmodifiers Super_L+Tab`>%SBPK%</action> \
+                    \| <action=`xdotool key \-\-clearmodifiers Super_L+Shift_L+Return`>%uname%</action>"
        }
+
