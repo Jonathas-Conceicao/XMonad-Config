@@ -26,19 +26,20 @@ Config { font = "-misc-fixed-*-*-*-*-14-*-*-*-*-*-*-*"
                                "--normal","green","--high","red"] 10
                     , Run Memory ["-t","Mem: <usedratio>%"] 10
                     , Run Swap [] 10
-                    , Run Com "uname" ["-s","-r"] "" 36000
-                    , Run Date "%a %_d %b %Y %H:%M:%S" "date" 10
+                    -- , Run Com "uname" ["-s","-r"] "" 36000
+                    , Run Date "%H:%M:%S - %A - %d %b(%m) %Y" "date" 10
+                    , Run UnsafeStdinReader
                     ]
        , sepChar = "%"
        , alignSep = "}{"
        , template =
          "<action=`xdotool key \-\-clearmodifiers Super_L+Tab`> <fc=#00DDFF>[W]</fc> </action>\
+         \| %UnsafeStdinReader% \
          \| <action=`gnome-terminal \-\- htop`>%cpu%</action> \
-         \| %memory% * %swap% \
-         \| %wlp3s0% }\
-         \{ <fc=#ee9a00>%date%</fc> \
-         \| %SBPK% \
-         \| <action=`xdotool key \-\-clearmodifiers Super_L+Shift_L+Return`>%uname%</action> \
+         \} <fc=#FFAA00>%date%</fc> \
+         \{ %SBPK% \
+         \| %wlp3s0% \
+         \| <action=`xdotool key \-\-clearmodifiers Super_L+Shift_L+Return`>%memory% * %swap%</action> \
          \| <action=`xdotool key \-\-clearmodifiers Super_L+Shift_L+c`><fc=#FF0000>[X]</fc></action>"
        }
 

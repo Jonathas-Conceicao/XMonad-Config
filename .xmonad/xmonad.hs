@@ -22,17 +22,33 @@ import System.IO
 
 main :: IO ()
 main = do
+  xmobarPipe <- spawnPipe "xmobar /home/?onathas/.xmonad/xmobarrc.hs"
   xmonad $ docks $ ewmh def
     { modMask = mod4Mask -- Use Super instead of Alt
-    , startupHook = setWMName "LG3D" >> myStartupHook
+    , startupHook = setWMName "LG3D"-- >> myStartupHook
     , manageHook = myManageHook
     , layoutHook = avoidStruts  $  layoutHook def
+    , logHook = dynamicLogWithPP $ myXMobarHook xmobarPipe
     , handleEventHook = fullscreenEventHook
     , terminal = "/usr/bin/gnome-terminal"
     } `additionalKeysP` myKeys
 
-myStartupHook = do
-  unsafeSpawn "xmobar /home/?onathas/.xmonad/xmobarrc.hs"
+myXMobarHook h = def
+  { ppOutput = hPutStrLn h
+  , ppCurrent = xmobarColor "yellow" ""
+                . wrap "[" "]"
+                . xmobarAddAction "xdotool key \\-\\-clearmodifiers Super_L+Tab"
+  , ppVisible = xmobarColor "gray"   "" . wrap "(" ")"
+  , ppUrgent  = xmobarColor "red"    "" . wrap ">" "<"
+  , ppHidden  = hideString
+
+  , ppLayout = hideString
+
+  , ppTitle   = xmobarColor "green"  "" . shorten 30
+  , ppSep = " | "
+
+  }
+-- myStartupHook =
 
 myManageHook = composeAll
   [ manageDocks
@@ -86,3 +102,9 @@ alterFile :: (Show a, Read a) => (a -> a) -> Handle -> IO ()
 alterFile f h = do
   curr <- hGetLine h
   hPutStrLn h $ show $ f $ read curr
+
+hideString :: String -> String
+hideString _ = ""
+
+xmobarAddAction :: String -> (String -> String)
+xmobarAddAction cmd = wrap ("<action=`" ++ cmd ++ "`>") "</action>"
