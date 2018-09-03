@@ -1,4 +1,3 @@
-{-# LANGUAGE CPP #-}
 import XMonad
 import XMonad.Util.Run
 import XMonad.Util.EZConfig
@@ -12,11 +11,6 @@ import XMonad.Hooks.EwmhDesktops (ewmh, fullscreenEventHook)
 import XMonad.Actions.CycleWS
 
 import XMonad.Hooks.SetWMName
-
-#ifdef MIN_VERSION_xmonad_extras /* Any version will do it */
-#define XMonadExtras
-import XMonad.Actions.Volume
-#endif
 
 import System.IO
 
@@ -87,7 +81,6 @@ myKeys =
   , ("C-S-<Print>", safeSpawn "gnome-screenshot" ["--window"])
 
   -- Audio control
-#ifdef XMonadExtras
   , ("<XF86AudioLowerVolume>", lowerVolume 3 >> return ())
   , ("M-S-<F2>"              , lowerVolume 3 >> return ())
 
@@ -96,7 +89,6 @@ myKeys =
 
   , ("<XF86AudioMute>"       , toggleMute    >> return ())
   , ("M-S-<F4>"              , toggleMute    >> return ())
-#endif
 
   -- Brightness control
   , ("<XF86MonBrightnessDown>", setBright (\x -> x - 50))
@@ -111,6 +103,15 @@ myKeys =
   , ("<XF86Calculator>"       , setBright (\_ ->     20))
   , ("M-S-<F12>"              , setBright (\_ ->     20))
   ]
+
+lowerVolume :: Int -> X ()
+lowerVolume n = unsafeSpawn $ "amixer -q sset Master " ++ (show n) ++ "%-"
+
+raiseVolume :: Int -> X ()
+raiseVolume n = unsafeSpawn $ "amixer -q sset Master " ++ (show n) ++ "%+"
+
+toggleMute :: X ()
+toggleMute = unsafeSpawn "amixer sset Master toggle"
 
 brightFile :: FilePath
 brightFile = "/sys/class/backlight/intel_backlight/brightness"
