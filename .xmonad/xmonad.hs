@@ -22,7 +22,7 @@ import System.IO
 
 main :: IO ()
 main = do
-  xmobarPipe <- spawnPipe "xmobar /home/?onathas/.xmonad/xmobarrc.hs"
+  xmobarPipe <- spawnPipe "xmobar /home/?onathas/.xmonad/xmobarrc.config"
   xmonad $ docks $ ewmh def
     { modMask = mod4Mask -- Use Super instead of Alt
     , startupHook = setWMName "LG3D"-- >> myStartupHook
