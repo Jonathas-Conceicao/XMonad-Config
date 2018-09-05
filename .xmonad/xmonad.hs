@@ -30,9 +30,9 @@ main = do
 myXMobarHook h = def
   { ppOutput = hPutStrLn h
   , ppCurrent = xmobarColor "yellow" ""
-                . wrap "[" "]"
                 . xmobarAddAction (Just 1) "xdotool key \\-\\-clearmodifiers Super_L+d"
                 . xmobarAddAction (Just 3) "xdotool key \\-\\-clearmodifiers Super_L+a"
+                . wrap "[" "]"
   , ppVisible = xmobarColor "gray"   "" . wrap "(" ")"
   , ppUrgent  = xmobarColor "red"    "" . wrap ">" "<"
   , ppHidden  = hideString
