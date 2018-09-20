@@ -7,10 +7,11 @@ import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.EwmhDesktops (ewmh, fullscreenEventHook)
+import XMonad.Hooks.SetWMName
+
+import XMonad.Layout.NoBorders
 
 import XMonad.Actions.CycleWS
-
-import XMonad.Hooks.SetWMName
 
 import System.IO
 
@@ -21,7 +22,7 @@ main = do
     { modMask = mod4Mask -- Use Super instead of Alt
     , startupHook = setWMName "LG3D"-- >> myStartupHook
     , manageHook = myManageHook
-    , layoutHook = avoidStruts  $  layoutHook def
+    , layoutHook = lessBorders OnlyFloat $ avoidStruts  $  layoutHook def
     , logHook = dynamicLogWithPP $ myXMobarHook xmobarPipe
     , handleEventHook = fullscreenEventHook
     , terminal = "/usr/bin/gnome-terminal"
@@ -48,7 +49,6 @@ myXMobarHook h = def
 myManageHook = composeAll
   [ manageDocks
   , manageHook def
-  , className =? "dota2" --> doIgnore
   ]
 
 myKeys =
