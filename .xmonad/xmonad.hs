@@ -1,5 +1,6 @@
 import XMonad
 import XMonad.Util.Run
+import XMonad.Util.Loggers
 import XMonad.Util.EZConfig
 
 import XMonad.Hooks.DynamicLog
@@ -12,7 +13,9 @@ import XMonad.Layout.NoBorders
 
 import XMonad.Actions.CycleWS
 
+import System.Process
 import System.IO
+import Data.List
 
 {- Main Config -}
 
@@ -45,7 +48,7 @@ myXMobarHook pipe = def
 
   , ppTitle   = xmobarColor "green"  "" . shorten 30
   , ppSep = " | "
-
+  , ppExtras = [(formatVolume 10 70) getVolume]
   }
 
 -- myStartupHook =
@@ -118,6 +121,28 @@ raiseVolume n = unsafeSpawn $ "amixer -q sset Master " ++ (show n) ++ "%+"
 
 toggleMute :: X ()
 toggleMute = unsafeSpawn "amixer sset Master toggle"
+
+getVolume :: Logger
+getVolume = logCmd "amixer sget Master | grep 'Right:' | awk -F'[][]' '{ print $2 }'"
+
+formatVolume :: Int -> Int -> Logger -> Logger
+formatVolume lo hi l = do
+  ms <- l
+  case ms of
+    Just s -> return $ Just $ rDye s
+    Nothing -> l
+  where
+    rDye = ( xmobarAddAction (Just 1) "xdotool key \\-\\-clearmodifiers Super_L+Shift_L+F3"
+           . xmobarAddAction (Just 3) "xdotool key \\-\\-clearmodifiers Super_L+Shift_L+F2"
+           . (++"%")
+           . dye
+           . read
+           . init)
+    dye x = if x <= lo
+            then xmobarColor "lightblue" "" (show x)
+            else if x >= hi
+                 then xmobarColor "red" "" (show x)
+                 else xmobarColor "green" "" (show x)
 
 brightFile :: FilePath
 brightFile = "/sys/class/backlight/intel_backlight/brightness"
