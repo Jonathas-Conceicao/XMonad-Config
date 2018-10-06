@@ -1,7 +1,6 @@
 import XMonad
 import XMonad.Util.Run
 import XMonad.Util.EZConfig
-import XMonad.Util.SpawnOnce
 
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
@@ -14,6 +13,8 @@ import XMonad.Layout.NoBorders
 import XMonad.Actions.CycleWS
 
 import System.IO
+
+{- Main Config -}
 
 main :: IO ()
 main = do
@@ -28,8 +29,10 @@ main = do
     , terminal = "/usr/bin/gnome-terminal"
     } `additionalKeysP` myKeys
 
-myXMobarHook h = def
-  { ppOutput = hPutStrLn h
+{- My aliases -}
+
+myXMobarHook pipe = def
+  { ppOutput = hPutStrLn pipe
   , ppCurrent = xmobarColor "yellow" ""
                 . xmobarAddAction (Just 1) "xdotool key \\-\\-clearmodifiers Super_L+d"
                 . xmobarAddAction (Just 3) "xdotool key \\-\\-clearmodifiers Super_L+a"
@@ -44,6 +47,7 @@ myXMobarHook h = def
   , ppSep = " | "
 
   }
+
 -- myStartupHook =
 
 myManageHook = composeAll
@@ -103,6 +107,8 @@ myKeys =
   , ("<XF86Calculator>"       , setBright (\_ ->     20))
   , ("M-S-<F12>"              , setBright (\_ ->     20))
   ]
+
+{- Utility Functions -}
 
 lowerVolume :: Int -> X ()
 lowerVolume n = unsafeSpawn $ "amixer -q sset Master " ++ (show n) ++ "%-"
