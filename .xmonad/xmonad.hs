@@ -134,6 +134,7 @@ formatVolume lo hi l = do
   where
     rDye = ( xmobarAddAction (Just 1) "xdotool key \\-\\-clearmodifiers Super_L+Shift_L+F3"
            . xmobarAddAction (Just 3) "xdotool key \\-\\-clearmodifiers Super_L+Shift_L+F2"
+           . xmobarAddAction (Just 2) "xdotool key \\-\\-clearmodifiers Super_L+Shift_L+F4"
            . (++"%")
            . dye
            . read
