@@ -1,4 +1,6 @@
-import XMonad
+import XMonad hiding (float)
+
+import qualified XMonad.StackSet as W
 
 import XMonad.Util.Run
 import XMonad.Util.Loggers
@@ -13,12 +15,12 @@ import XMonad.Hooks.SetWMName
 import XMonad.Layout.NoBorders
 
 import XMonad.Actions.CycleWS
-
-import XMonad.Operations
   
 import System.Process
 import System.IO
 import Data.List
+
+import Data.Maybe (fromMaybe)
 
 {- Main Config -}
 
@@ -83,6 +85,9 @@ myKeys =
   , ("M-S-<Left>", shiftToPrev >> prevWS)
 
   , ("M-n",        moveTo Next EmptyWS)
+
+  -- Set window to Player View Mode
+  , ("M-f", setToPlayerView)
 
   -- Screenshot
   , ("<Print>"    , safeSpawn "gnome-screenshot" [])
@@ -161,6 +166,21 @@ alterFile f h = do
 
 toggleMute :: X ()
 toggleMute = unsafeSpawn "amixer sset Master toggle" >> dummyStateUpdate
+
+-- | Gets the currently focused window
+focusedWindow :: X(Maybe Window)
+focusedWindow = gets (W.peek . windowset)
+
+-- | Sets currently focused window to float at screen corner
+setToPlayerView :: X ()
+setToPlayerView = do
+  mw <- focusedWindow
+  case mw of
+    Just w -> w `floatTo` rr
+    Nothing -> return ()
+  where
+    floatTo w rr = windows $ W.float w rr
+    rr = W.RationalRect 0.65 0.65 0.33 0.33
 
 hideString :: String -> String
 hideString _ = ""
