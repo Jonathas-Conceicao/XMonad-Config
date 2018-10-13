@@ -1,4 +1,5 @@
 import XMonad
+
 import XMonad.Util.Run
 import XMonad.Util.Loggers
 import XMonad.Util.EZConfig
@@ -13,6 +14,8 @@ import XMonad.Layout.NoBorders
 
 import XMonad.Actions.CycleWS
 
+import XMonad.Operations
+  
 import System.Process
 import System.IO
 import Data.List
@@ -114,13 +117,13 @@ myKeys =
 {- Utility Functions -}
 
 lowerVolume :: Int -> X ()
-lowerVolume n = unsafeSpawn $ "amixer -q sset Master " ++ (show n) ++ "%-"
+lowerVolume n = unsafeSpawn ("amixer -q sset Master " ++ (show n) ++ "%-") >> dummyStateUpdate
 
 raiseVolume :: Int -> X ()
-raiseVolume n = unsafeSpawn $ "amixer -q sset Master " ++ (show n) ++ "%+"
+raiseVolume n = unsafeSpawn ("amixer -q sset Master " ++ (show n) ++ "%+") >> dummyStateUpdate
 
-toggleMute :: X ()
-toggleMute = unsafeSpawn "amixer sset Master toggle"
+dummyStateUpdate :: X ()
+dummyStateUpdate = windows id
 
 getVolume :: Logger
 getVolume = logCmd "amixer sget Master | grep 'Right:' | awk -F'[][]' '{ print $2 }'"
@@ -155,6 +158,9 @@ alterFile :: (Show a, Read a) => (a -> a) -> Handle -> IO ()
 alterFile f h = do
   curr <- hGetLine h
   hPutStrLn h $ show $ f $ read curr
+
+toggleMute :: X ()
+toggleMute = unsafeSpawn "amixer sset Master toggle" >> dummyStateUpdate
 
 hideString :: String -> String
 hideString _ = ""
