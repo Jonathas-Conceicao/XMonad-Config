@@ -42,11 +42,11 @@ main = do
 myXMobarHook pipe = def
   { ppOutput = hPutStrLn pipe
   , ppCurrent = xmobarColor "yellow" ""
-                . xmobarAddAction (Just 1) "xdotool key \\-\\-clearmodifiers Super_L+d"
-                . xmobarAddAction (Just 3) "xdotool key \\-\\-clearmodifiers Super_L+a"
+                . xmobarAddAction (Just 1) (xdotool "Super_L+d")
+                . xmobarAddAction (Just 3) (xdotool "Super_L+a")
                 . wrap "[" "]"
-  , ppVisible = xmobarColor "gray"   "" . wrap "(" ")"
-  , ppUrgent  = xmobarColor "red"    "" . wrap ">" "<"
+  , ppVisible = xmobarColor "gray" "" . wrap "(" ")"
+  , ppUrgent  = xmobarColor "red"  "" . wrap ">" "<"
   , ppHidden  = hideString
 
   , ppLayout = hideString
@@ -140,9 +140,9 @@ formatVolume lo hi l = do
     Just s -> return $ Just $ rDye s
     Nothing -> l
   where
-    rDye = ( xmobarAddAction (Just 1) "xdotool key \\-\\-clearmodifiers Super_L+Shift_L+F3"
-           . xmobarAddAction (Just 3) "xdotool key \\-\\-clearmodifiers Super_L+Shift_L+F2"
-           . xmobarAddAction (Just 2) "xdotool key \\-\\-clearmodifiers Super_L+Shift_L+F4"
+    rDye = ( xmobarAddAction (Just 1) (xdotool "Super_L+Shift_L+F3")
+           . xmobarAddAction (Just 3) (xdotool "Super_L+Shift_L+F2")
+           . xmobarAddAction (Just 2) (xdotool "Super_L+Shift_L+F4")
            . (++"%")
            . dye
            . read
@@ -185,6 +185,15 @@ setToPlayerView = do
 hideString :: String -> String
 hideString _ = ""
 
+xdotool :: String -> String
+xdotool = (++) "xdotool key \\-\\-clearmodifiers "
+
 xmobarAddAction :: Maybe Int -> String -> (String -> String)
-xmobarAddAction Nothing cmd = wrap ("<action=`" ++ cmd ++ "`>") "</action>"
-xmobarAddAction (Just n) cmd = wrap ("<action=`" ++ cmd ++ "` button="++ (show n) ++">") "</action>"
+xmobarAddAction Nothing cmd =
+  wrap
+  ("<action=`" ++ cmd ++ "`>")
+  "</action>"
+xmobarAddAction (Just n) cmd =
+  wrap
+  ("<action=`" ++ cmd ++ "` button="++ (show n) ++">")
+  "</action>"
