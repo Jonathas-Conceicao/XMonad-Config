@@ -15,7 +15,8 @@ import XMonad.Hooks.SetWMName
 import XMonad.Layout.NoBorders
 
 import XMonad.Actions.CycleWS
-  
+
+import Control.Exception (catch, IOException)
 import System.Process
 import System.IO
 import Data.List
@@ -121,17 +122,44 @@ myKeys =
 
 {- Utility Functions -}
 
-lowerVolume :: Int -> X ()
-lowerVolume n = unsafeSpawn ("amixer -q sset Master " ++ (show n) ++ "%-") >> dummyStateUpdate
-
-raiseVolume :: Int -> X ()
-raiseVolume n = unsafeSpawn ("amixer -q sset Master " ++ (show n) ++ "%+") >> dummyStateUpdate
+econst :: Monad m => a -> IOException -> m a
+econst = const . return
 
 dummyStateUpdate :: X ()
 dummyStateUpdate = windows id
 
+toggleMute :: X ()
+toggleMute = do
+  safeSpawn "amixer" ["sset", "Master", "toggle"]
+  dummyStateUpdate
+
+lowerVolume :: Int -> X ()
+lowerVolume n = do
+  safeSpawn "amixer" ["sset", "Master", (show n) ++ "%-", "-q"]
+  dummyStateUpdate
+
+raiseVolume :: Int -> X ()
+raiseVolume n = do
+  safeSpawn "amixer" ["sset", "Master", (show n) ++ "%+", "-q"]
+  dummyStateUpdate
+
 getVolume :: Logger
-getVolume = logCmd "amixer sget Master | grep 'Right:' | awk -F'[][]' '{ print $2 }'"
+getVolume = liftIO $ do
+  (_, out, _, _) <- runInteractiveCommand "amixer sget Master"
+  mInfo <- hGetContents out `catch` econst ""
+  return $ Just $ filterVolume mInfo
+
+filterVolume :: String -> String
+filterVolume = extract
+  . dropWhile (/='[')
+  . last
+  . lines
+  where
+    extract [] = "-1"
+    extract s = case getBrakets $ dropWhile (/='[') $ tail s of
+      "on" -> init $ getBrakets s
+      _    -> "-" ++ (init $ getBrakets s)
+    getBrakets = (tail . dropWhile (/='[') . takeWhile (/=']'))
 
 formatVolume :: Int -> Int -> Logger -> Logger
 formatVolume lo hi l = do
@@ -145,13 +173,14 @@ formatVolume lo hi l = do
            . xmobarAddAction (Just 2) (xdotool "Super_L+Shift_L+F4")
            . (++"%")
            . dye
-           . read
-           . init)
-    dye x = if x <= lo
-            then xmobarColor "lightblue" "" (show x)
-            else if x >= hi
-                 then xmobarColor "red" "" (show x)
-                 else xmobarColor "green" "" (show x)
+           . read)
+    dye x = if x < 0
+            then show x
+            else if x <= lo
+                 then xmobarColor "lightblue" "" (show x)
+                 else if x >= hi
+                      then xmobarColor "red" "" (show x)
+                      else xmobarColor "green" "" (show x)
 
 brightFile :: FilePath
 brightFile = "/sys/class/backlight/intel_backlight/brightness"
@@ -163,9 +192,6 @@ alterFile :: (Show a, Read a) => (a -> a) -> Handle -> IO ()
 alterFile f h = do
   curr <- hGetLine h
   hPutStrLn h $ show $ f $ read curr
-
-toggleMute :: X ()
-toggleMute = unsafeSpawn "amixer sset Master toggle" >> dummyStateUpdate
 
 -- | Gets the currently focused window
 focusedWindow :: X(Maybe Window)
