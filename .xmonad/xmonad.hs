@@ -156,10 +156,19 @@ filterVolume = extract
   . lines
   where
     extract [] = "-1"
-    extract s = case getBrakets $ dropWhile (/='[') $ tail s of
-      "on" -> init $ getBrakets s
-      _    -> "-" ++ (init $ getBrakets s)
-    getBrakets = (tail . dropWhile (/='[') . takeWhile (/=']'))
+    extract s = case status of
+      "on" -> volume
+      _    -> "-" ++ volume
+      where
+        info = getInfoInBrakets s
+        volume = init $ head info
+        status = last info
+
+getInfoInBrakets :: String -> [String]
+getInfoInBrakets [] = []
+getInfoInBrakets s = case takeWhile (/=']') $ dropWhile (/='[') s of
+  ""     -> []
+  (_:ss) -> ss:(getInfoInBrakets $ tail $ dropWhile (/='[') s)
 
 formatVolume :: Int -> Int -> Logger -> Logger
 formatVolume lo hi l = do
