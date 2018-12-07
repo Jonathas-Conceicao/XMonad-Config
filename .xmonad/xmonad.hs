@@ -5,13 +5,14 @@ import qualified XMonad.StackSet as W
 import XMonad.Util.Run
 import XMonad.Util.Loggers
 import XMonad.Util.EZConfig
+import XMonad.Util.NamedWindows
 
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.EwmhDesktops (ewmh, fullscreenEventHook)
 import XMonad.Hooks.SetWMName
-
+import XMonad.Hooks.UrgencyHook
 import XMonad.Layout.NoBorders
 
 import XMonad.Actions.CycleWS
@@ -23,12 +24,23 @@ import Data.List
 
 import Data.Maybe (fromMaybe)
 
+data LibNotifyUrgencyHook = LibNotifyUrgencyHook deriving (Read, Show)
+
+instance UrgencyHook LibNotifyUrgencyHook where
+  urgencyHook LibNotifyUrgencyHook w = do
+    name     <- getName w
+    Just idx <- fmap (W.findTag w) $ gets windowset
+    safeSpawn "notify-send" [show name, "workspace " ++ idx]
+
 {- Main Config -}
 
 main :: IO ()
 main = do
   xmobarPipe <- spawnPipe "xmobar /home/?onathas/.xmonad/xmobarrc.config"
-  xmonad $ docks $ ewmh def
+  xmonad
+    $ docks
+    $ withUrgencyHook LibNotifyUrgencyHook
+    $ ewmh def
     { modMask = mod4Mask -- Use Super instead of Alt
     , startupHook = setWMName "LG3D"-- >> myStartupHook
     , manageHook = myManageHook
