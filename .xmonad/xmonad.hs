@@ -10,7 +10,7 @@ import XMonad.Util.NamedWindows
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
-import XMonad.Hooks.EwmhDesktops (ewmh, fullscreenEventHook)
+import XMonad.Hooks.EwmhDesktops (ewmh, ewmhDesktopsEventHook, fullscreenEventHook)
 import XMonad.Hooks.SetWMName
 import XMonad.Hooks.UrgencyHook
 import XMonad.Layout.NoBorders
@@ -46,7 +46,7 @@ main = do
     , manageHook = myManageHook
     , layoutHook = lessBorders OnlyScreenFloat $ avoidStruts  $  layoutHook def
     , logHook = dynamicLogWithPP $ myXMobarHook xmobarPipe
-    , handleEventHook = fullscreenEventHook
+    , handleEventHook = myHandleEventHook
     , terminal = "/usr/bin/gnome-terminal"
     } `additionalKeysP` myKeys
 
@@ -68,6 +68,11 @@ myXMobarHook pipe = def
   , ppSep = " | "
   , ppExtras = [(formatVolume 10 70) getVolume]
   }
+
+myHandleEventHook
+  =   handleEventHook def
+  <+> ewmhDesktopsEventHook
+  <+> fullscreenEventHook
 
 -- myStartupHook =
 
