@@ -47,7 +47,7 @@ main = do
     , layoutHook = lessBorders OnlyScreenFloat $ avoidStruts  $  layoutHook def
     , logHook = dynamicLogWithPP $ myXMobarHook xmobarPipe
     , handleEventHook = myHandleEventHook
-    , terminal = "/usr/bin/gnome-terminal"
+    , terminal = "/usr/bin/xterm"
     } `additionalKeysP` myKeys
 
 {- My aliases -}
