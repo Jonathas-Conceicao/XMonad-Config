@@ -108,7 +108,7 @@ myKeys =
   , ("M-n",        moveTo Next EmptyWS)
 
   -- Set window to Player View Mode
-  , ("M-f", setToPlayerView)
+  , ("M-f", togglePlayerView)
 
   -- Screenshot
   , ("<Print>"    , safeSpawn "gnome-screenshot" [])

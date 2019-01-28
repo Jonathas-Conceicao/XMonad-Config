@@ -3,25 +3,34 @@
 -- https://github.com/Jonathas-Conceicao
 
 module JonathasConceicao.PlayerView
-  ( setToPlayerView -- Set current window to player view
-  -- setToPlayerView :: X ()
+  ( togglePlayerView -- Set current window to player view
+  -- togglePlayerView :: X ()
   )
   where
 
 import XMonad (X, Window
               , windows
               , windowset
-              , gets)
+              , gets
+              , modify
+              , runQuery )
 import XMonad.StackSet (RationalRect (..)
                        , float
-                       , peek)
+                       , sink
+                       , peek )
+import XMonad.Actions.CopyWindow ( copyToAll
+                                 , killAllOtherCopies )
+import XMonad.Hooks.FadeWindows ( isFloating )
 
--- | Sets currently focused window to float at screen corner
-setToPlayerView :: X ()
-setToPlayerView = do
+togglePlayerView :: X ()
+togglePlayerView = do
   mw <- focusedWindow
   case mw of
-    Just w -> w `floatTo` rr
+    Just w -> do
+      floating <- runQuery isFloating w
+      if floating
+        then (windows $ sink w) >> killAllOtherCopies
+        else w `floatTo` rr >> windows copyToAll
     Nothing -> return ()
   where
     floatTo w rr = windows $ float w rr
@@ -31,4 +40,4 @@ setToPlayerView = do
 
 -- | Gets the currently focused window
 focusedWindow :: X(Maybe Window)
-focusedWindow = gets (peek . windowset)
+focusedWindow = gets $ peek . windowset
