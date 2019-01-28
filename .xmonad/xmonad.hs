@@ -1,36 +1,41 @@
-import XMonad hiding (float)
+-- XMonad Config
+-- Author: Jonathas Conceição
+-- https://github.com/Jonathas-Conceicao
 
-import qualified XMonad.StackSet as W
+import XMonad ( X(..), xmonad, def, (<+>)
+              , terminal, modMask, mod4Mask, composeAll
+              , startupHook, manageHook, layoutHook
+              , logHook, handleEventHook )
 
-import XMonad.Util.Run
-import XMonad.Util.Loggers
-import XMonad.Util.EZConfig
-import XMonad.Util.NamedWindows
+import XMonad.Util.Run (spawnPipe, safeSpawn, hPutStrLn)
+import XMonad.Util.EZConfig ( additionalKeysP )
 
-import XMonad.Hooks.DynamicLog
-import XMonad.Hooks.ManageDocks
-import XMonad.Hooks.ManageHelpers
-import XMonad.Hooks.EwmhDesktops (ewmh, ewmhDesktopsEventHook, fullscreenEventHook)
-import XMonad.Hooks.SetWMName
-import XMonad.Hooks.UrgencyHook
-import XMonad.Layout.NoBorders
+import XMonad.Hooks.UrgencyHook (withUrgencyHook)
+import XMonad.Hooks.DynamicLog ( dynamicLogWithPP
+                               , ppOutput, ppCurrent, ppVisible
+                               , ppUrgent, ppHidden, ppLayout
+                               , ppTitle, ppExtras, ppSep
+                               , xmobarColor
+                               , wrap
+                               , shorten )
+import XMonad.Hooks.ManageDocks ( Direction1D ( Next, Prev )
+                                , docks, manageDocks, avoidStruts )
+import XMonad.Hooks.EwmhDesktops ( ewmh, ewmhDesktopsEventHook
+                                 , fullscreenEventHook )
+import XMonad.Hooks.SetWMName ( setWMName )
+import XMonad.Layout.NoBorders ( Ambiguity ( OnlyScreenFloat )
+                               , lessBorders)
+import XMonad.Actions.CycleWS ( WSType( NonEmptyWS, EmptyWS )
+                              , nextScreen, shiftToNext
+                              , prevScreen, shiftToPrev
+                              , nextWS, prevWS, moveTo)
 
-import XMonad.Actions.CycleWS
-
-import Control.Exception (catch, IOException)
-import System.Process
-import System.IO
-import Data.List
-
-import Data.Maybe (fromMaybe)
-
-data LibNotifyUrgencyHook = LibNotifyUrgencyHook deriving (Read, Show)
-
-instance UrgencyHook LibNotifyUrgencyHook where
-  urgencyHook LibNotifyUrgencyHook w = do
-    name     <- getName w
-    Just idx <- fmap (W.findTag w) $ gets windowset
-    safeSpawn "notify-send" [show name, "workspace " ++ idx]
+import JonathasConceicao.Volume
+import JonathasConceicao.Brightness
+import JonathasConceicao.Xmobar
+import JonathasConceicao.Util
+import JonathasConceicao.Notification
+import JonathasConceicao.PlayerView
 
 {- Main Config -}
 
@@ -61,9 +66,7 @@ myXMobarHook pipe = def
   , ppVisible = xmobarColor "gray" "" . wrap "(" ")"
   , ppUrgent  = xmobarColor "red"  "" . wrap ">" "<"
   , ppHidden  = hideString
-
   , ppLayout = hideString
-
   , ppTitle   = xmobarColor "green"  "" . shorten 30
   , ppSep = " | "
   , ppExtras = [(formatVolume 10 70) getVolume]
@@ -136,116 +139,3 @@ myKeys =
   , ("<XF86Calculator>"       , setBright (\_ ->     20))
   , ("M-S-<F12>"              , setBright (\_ ->     20))
   ]
-
-{- Utility Functions -}
-
-econst :: Monad m => a -> IOException -> m a
-econst = const . return
-
-dummyStateUpdate :: X ()
-dummyStateUpdate = windows id
-
-toggleMute :: X ()
-toggleMute = do
-  safeSpawn "amixer" ["sset", "Master", "toggle"]
-  dummyStateUpdate
-
-lowerVolume :: Int -> X ()
-lowerVolume n = do
-  safeSpawn "amixer" ["sset", "Master", (show n) ++ "%-", "-q"]
-  dummyStateUpdate
-
-raiseVolume :: Int -> X ()
-raiseVolume n = do
-  safeSpawn "amixer" ["sset", "Master", (show n) ++ "%+", "-q"]
-  dummyStateUpdate
-
-getVolume :: Logger
-getVolume = liftIO $ do
-  (_, out, _, _) <- runInteractiveCommand "amixer sget Master"
-  mInfo <- hGetContents out `catch` econst ""
-  return $ Just $ filterVolume mInfo
-
-filterVolume :: String -> String
-filterVolume = extract
-  . dropWhile (/='[')
-  . last
-  . lines
-  where
-    extract [] = "-1"
-    extract s = case status of
-      "on" -> volume
-      _    -> "-" ++ volume
-      where
-        info = getInfoInBrakets s
-        volume = init $ head info
-        status = last info
-
-getInfoInBrakets :: String -> [String]
-getInfoInBrakets [] = []
-getInfoInBrakets s = case takeWhile (/=']') $ dropWhile (/='[') s of
-  ""     -> []
-  (_:ss) -> ss:(getInfoInBrakets $ tail $ dropWhile (/='[') s)
-
-formatVolume :: Int -> Int -> Logger -> Logger
-formatVolume lo hi l = do
-  ms <- l
-  case ms of
-    Just s -> return $ Just $ rDye s
-    Nothing -> l
-  where
-    rDye = ( xmobarAddAction (Just 1) (xdotool "Super_L+Shift_L+F3")
-           . xmobarAddAction (Just 3) (xdotool "Super_L+Shift_L+F2")
-           . xmobarAddAction (Just 2) (xdotool "Super_L+Shift_L+F4")
-           . (++"%")
-           . dye
-           . read)
-    dye x = if x < 0
-            then show x
-            else if x <= lo
-                 then xmobarColor "lightblue" "" (show x)
-                 else if x >= hi
-                      then xmobarColor "red" "" (show x)
-                      else xmobarColor "green" "" (show x)
-
-brightFile :: FilePath
-brightFile = "/sys/class/backlight/intel_backlight/brightness"
-
-setBright :: (Int -> Int) -> X ()
-setBright f = liftIO $ withFile brightFile ReadWriteMode $ alterFile f
-
-alterFile :: (Show a, Read a) => (a -> a) -> Handle -> IO ()
-alterFile f h = do
-  curr <- hGetLine h
-  hPutStrLn h $ show $ f $ read curr
-
--- | Gets the currently focused window
-focusedWindow :: X(Maybe Window)
-focusedWindow = gets (W.peek . windowset)
-
--- | Sets currently focused window to float at screen corner
-setToPlayerView :: X ()
-setToPlayerView = do
-  mw <- focusedWindow
-  case mw of
-    Just w -> w `floatTo` rr
-    Nothing -> return ()
-  where
-    floatTo w rr = windows $ W.float w rr
-    rr = W.RationalRect 0.65 0.65 0.33 0.33
-
-hideString :: String -> String
-hideString _ = ""
-
-xdotool :: String -> String
-xdotool = (++) "xdotool key \\-\\-clearmodifiers "
-
-xmobarAddAction :: Maybe Int -> String -> (String -> String)
-xmobarAddAction Nothing cmd =
-  wrap
-  ("<action=`" ++ cmd ++ "`>")
-  "</action>"
-xmobarAddAction (Just n) cmd =
-  wrap
-  ("<action=`" ++ cmd ++ "` button="++ (show n) ++">")
-  "</action>"
