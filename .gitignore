@@ -26,4 +26,5 @@ cabal.project.local~
 xmonad.errors
 xmonad.state
 xmonad-x86_64-linux
-
+# XMonad Prompt
+prompt-history
