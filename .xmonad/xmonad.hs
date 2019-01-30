@@ -30,6 +30,9 @@ import XMonad.Actions.CycleWS ( WSType( NonEmptyWS, EmptyWS )
                               , prevScreen, shiftToPrev
                               , nextWS, prevWS, moveTo)
 
+import qualified XMonad.Prompt ( def )
+import XMonad.Prompt.XMonad ( xmonadPromptC )
+
 import JonathasConceicao.Volume
 import JonathasConceicao.Brightness
 import JonathasConceicao.Xmobar
@@ -59,15 +62,15 @@ main = do
 
 myXMobarHook pipe = def
   { ppOutput = hPutStrLn pipe
-  , ppCurrent = xmobarColor "yellow" ""
+  , ppCurrent = xmobarColor "#F1FA8C" ""
                 . xmobarAddAction (Just 1) (xdotool "Super_L+d")
                 . xmobarAddAction (Just 3) (xdotool "Super_L+a")
                 . wrap "[" "]"
-  , ppVisible = xmobarColor "gray" "" . wrap "(" ")"
-  , ppUrgent  = xmobarColor "red"  "" . wrap ">" "<"
+  , ppVisible = xmobarColor "#6272A4" "" . wrap "(" ")"
+  , ppUrgent  = xmobarColor "#FF5555"  "" . wrap ">" "<"
   , ppHidden  = hideString
   , ppLayout = hideString
-  , ppTitle   = xmobarColor "green"  "" . shorten 30
+  , ppTitle   = xmobarColor "#BD93F9"  "" . shorten 30
   , ppSep = " | "
   , ppExtras = [(formatVolume 10 70) getVolume]
   }
@@ -84,8 +87,14 @@ myManageHook = composeAll
   , manageHook def
   ]
 
+myXMonadPrompt = xmonadPromptC
+  [ ("next-wp", moveTo Next NonEmptyWS)
+  , ("prev-wp", moveTo Prev NonEmptyWS)
+  , ("reboot", safeSpawn "shutdown" ["-r", "-h now"])
+  ] XMonad.Prompt.def
+
 myKeys =
-  [ ("M-x"  , safeSpawn "xmessage" ["\"Hello XMonad\""])
+  [ ("M-x", myXMonadPrompt) -- Prompt for running XMonad commands
 
   , ("M-S-l", safeSpawn "dm-tool" ["lock"])
 

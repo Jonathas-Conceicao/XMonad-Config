@@ -69,10 +69,10 @@ formatVolume lo hi l = do
     dye x = if x < 0
             then show x
             else if x <= lo
-                 then xmobarColor "lightblue" "" (show x)
+                 then xmobarColor "#FF79C6" "" (show x)
                  else if x >= hi
-                      then xmobarColor "red" "" (show x)
-                      else xmobarColor "green" "" (show x)
+                      then xmobarColor "#FF5555" "" (show x)
+                      else xmobarColor "#BD93F9" "" (show x)
 
 {- Private utility functions -}
 
