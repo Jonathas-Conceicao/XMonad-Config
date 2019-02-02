@@ -21,7 +21,7 @@ import JonathasConceicao.Util
   , econst
   , xdotool
   )
-import JonathasConceicao.Xmobar (xmobarAddAction)
+import JonathasConceicao.Xmobar (xmobarAddAction, xmobarAddIcon)
 
 import XMonad (X, liftIO)
 import XMonad.Util.Loggers (Logger)
@@ -60,7 +60,9 @@ formatVolume lo hi l = do
     Just s -> return $ Just $ rDye s
     Nothing -> l
   where
-    rDye = ( xmobarAddAction (Just 1) (xdotool "Super_L+Shift_L+F3")
+    rDye = ( xmobarAddIcon "sound.xbm"
+           . (" "++)
+           . xmobarAddAction (Just 1) (xdotool "Super_L+Shift_L+F3")
            . xmobarAddAction (Just 3) (xdotool "Super_L+Shift_L+F2")
            . xmobarAddAction (Just 2) (xdotool "Super_L+Shift_L+F4")
            . (++"%")

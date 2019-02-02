@@ -30,8 +30,19 @@ import XMonad.Actions.CycleWS ( WSType( NonEmptyWS, EmptyWS )
                               , prevScreen, shiftToPrev
                               , nextWS, prevWS, moveTo)
 
-import qualified XMonad.Prompt ( def )
+import XMonad.Prompt ( XPConfig, XPPosition (Top)
+                     , font, position
+                     , bgColor, fgColor
+                     , bgHLight, fgHLight
+                     , promptBorderWidth
+                     , alwaysHighlight
+                     , searchPredicate
+                     , maxComplRows
+                     )
+import XMonad.Prompt.FuzzyMatch ( fuzzyMatch )
 import XMonad.Prompt.XMonad ( xmonadPromptC )
+import XMonad.Prompt.Input ( inputPrompt, (?+) )
+import XMonad.Prompt.ConfirmPrompt ( confirmPrompt )
 
 import JonathasConceicao.Volume
 import JonathasConceicao.Brightness
@@ -51,17 +62,17 @@ main = do
     $ ewmh def
     { modMask = mod4Mask -- Use Super instead of Alt
     , startupHook = setWMName "LG3D"-- >> myStartupHook
-    , manageHook = myManageHook
+    , manageHook = manageHook def <+> myManageHook 
     , layoutHook = lessBorders OnlyScreenFloat $ avoidStruts  $  layoutHook def
     , logHook = dynamicLogWithPP $ myXMobarHook xmobarPipe
-    , handleEventHook = myHandleEventHook
+    , handleEventHook = handleEventHook def <+> myHandleEventHook
     , terminal = "/usr/bin/xterm"
     } `additionalKeysP` myKeys
 
 {- My aliases -}
 
 myXMobarHook pipe = def
-  { ppOutput = hPutStrLn pipe
+  { ppOutput  = hPutStrLn pipe
   , ppCurrent = xmobarColor "#F1FA8C" ""
                 . xmobarAddAction (Just 1) (xdotool "Super_L+d")
                 . xmobarAddAction (Just 3) (xdotool "Super_L+a")
@@ -69,32 +80,61 @@ myXMobarHook pipe = def
   , ppVisible = xmobarColor "#6272A4" "" . wrap "(" ")"
   , ppUrgent  = xmobarColor "#FF5555"  "" . wrap ">" "<"
   , ppHidden  = hideString
-  , ppLayout = hideString
-  , ppTitle   = xmobarColor "#BD93F9"  "" . shorten 30
-  , ppSep = " | "
-  , ppExtras = [(formatVolume 10 70) getVolume]
+  , ppLayout  = layoutIcons
+  , ppTitle   = xmobarColor "#BD93F9"  ""
+                . xmobarAddAction (Just 1) (xdotool "Super_L+k")
+                . xmobarAddAction (Just 3) (xdotool "Super_L+j")
+                . shorten 40
+  , ppSep     = " | "
+  , ppExtras  = [(formatVolume 10 70) getVolume]
   }
 
 myHandleEventHook
-  =   handleEventHook def
-  <+> ewmhDesktopsEventHook
+  =   ewmhDesktopsEventHook
   <+> fullscreenEventHook
 
 -- myStartupHook =
 
 myManageHook = composeAll
   [ manageDocks
-  , manageHook def
   ]
+
+myPrompt :: XPConfig
+myPrompt = def
+  { font = "xft:Bitstream DejaVu Sans Mono Book:size=9:bold:antialias=true"
+  , bgColor = "#282A36"
+  , fgColor = "#F8F8F2"
+  , bgHLight = "#6272A4"
+  , fgHLight = "#F8F8F2"
+  , promptBorderWidth = 0
+  , alwaysHighlight = True
+  , position = Top
+  , maxComplRows = Just 2
+  , searchPredicate = fuzzyMatch
+  }
+
+confirm = confirmPrompt myPrompt
 
 myXMonadPrompt = xmonadPromptC
   [ ("next-wp", moveTo Next NonEmptyWS)
   , ("prev-wp", moveTo Prev NonEmptyWS)
-  , ("reboot", safeSpawn "shutdown" ["-r", "-h now"])
-  ] XMonad.Prompt.def
+  , ("togglePlayerView", togglePlayerView)
+  , ("reboot", confirm "Reboot now?" $ safeSpawn "shutdown" ["--reboot", "0"])
+  , ("poweroff", confirm "Poweroff now?" $ safeSpawn "shutdown" ["--poweroff", "0"])
+  ] myPrompt
 
 myKeys =
   [ ("M-x", myXMonadPrompt) -- Prompt for running XMonad commands
+
+  -- , ("M-S-p", )
+  -- Runs dmenu with my config
+  , ("M-p", safeSpawn "dmenu_run" [ "-fn", "xft:Bitstream DejaVu Sans Mono Book:size=9:bold:antialias=true",
+                                    "-p", "$>",
+                                    "-nb", "#282A36",
+                                    "-nf", "#F8F8F2",
+                                    "-sb", "#6272A4",
+                                    "-sf", "#F8F8F2"
+                                  ])
 
   , ("M-S-l", safeSpawn "dm-tool" ["lock"])
 
