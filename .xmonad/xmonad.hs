@@ -14,7 +14,7 @@ import XMonad.Hooks.UrgencyHook (withUrgencyHook)
 import XMonad.Hooks.DynamicLog ( dynamicLogWithPP
                                , ppOutput, ppCurrent, ppVisible
                                , ppUrgent, ppHidden, ppLayout
-                               , ppTitle, ppExtras, ppSep
+                               , ppTitle, ppSep
                                , xmobarColor
                                , wrap
                                , shorten )
@@ -55,7 +55,7 @@ import JonathasConceicao.PlayerView
 
 main :: IO ()
 main = do
-  xmobarPipe <- spawnPipe "xmobar /home/?onathas/.xmonad/xmobarrc.config"
+  xmobarPipe <- spawnPipe "xmobar /home/?onathas/.xmonad/xmobar.hs"
   xmonad
     $ docks
     $ withUrgencyHook LibNotifyUrgencyHook
@@ -74,19 +74,14 @@ main = do
 myXMobarHook pipe = def
   { ppOutput  = hPutStrLn pipe
   , ppCurrent = xmobarColor "#F1FA8C" ""
-                . xmobarAddAction (Just 1) (xdotool "Super_L+d")
-                . xmobarAddAction (Just 3) (xdotool "Super_L+a")
                 . wrap "[" "]"
   , ppVisible = xmobarColor "#6272A4" "" . wrap "(" ")"
   , ppUrgent  = xmobarColor "#FF5555"  "" . wrap ">" "<"
   , ppHidden  = hideString
   , ppLayout  = layoutIcons
   , ppTitle   = xmobarColor "#BD93F9"  ""
-                . xmobarAddAction (Just 1) (xdotool "Super_L+k")
-                . xmobarAddAction (Just 3) (xdotool "Super_L+j")
                 . shorten 40
   , ppSep     = " | "
-  , ppExtras  = [(formatVolume 10 70) getVolume]
   }
 
 myHandleEventHook

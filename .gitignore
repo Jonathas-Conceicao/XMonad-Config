@@ -22,9 +22,12 @@ cabal.project.local~
 .HTF/
 .ghc.environment.*
 
-# xmonad files
+# XMonad files
 xmonad.errors
 xmonad.state
 xmonad-x86_64-linux
 # XMonad Prompt
 prompt-history
+# XMobar compiled files
+xmobar
+xmobar.errors
