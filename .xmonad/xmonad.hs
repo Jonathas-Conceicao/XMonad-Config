@@ -80,7 +80,7 @@ myXMobarHook pipe = def
   , ppHidden  = hideString
   , ppLayout  = layoutIcons
   , ppTitle   = xmobarColor "#BD93F9"  ""
-                . shorten 40
+                . shorten 70
   , ppSep     = " | "
   }
 
@@ -171,15 +171,15 @@ myKeys =
   , ("M-S-<F4>"              , toggleMute    >> return ())
 
   -- Brightness control
-  , ("<XF86MonBrightnessDown>", setBright (\x -> x - 50))
-  , ("<XF86Mail>"             , setBright (\x -> x - 50))
-  , ("M-S-<F9>"               , setBright (\x -> x - 50))
+  , ("<XF86MonBrightnessDown>", lowerBright 3)
+  , ("<XF86Mail>"             , lowerBright 3)
+  , ("M-S-<F9>"               , lowerBright 3)
 
-  , ("<XF86MonBrightnessUp>"  , setBright (\x -> x + 50))
-  , ("<XF86HomePage>"         , setBright (\x -> x + 50))
-  , ("M-S-<F10>"              , setBright (\x -> x + 50))
+  , ("<XF86MonBrightnessUp>"  , raiseBright 3)
+  , ("<XF86HomePage>"         , raiseBright 3)
+  , ("M-S-<F10>"              , raiseBright 3)
 
-  , ("<XF86KbdLightOnOff>"    , setBright (\_ ->     20))
-  , ("<XF86Calculator>"       , setBright (\_ ->     20))
-  , ("M-S-<F12>"              , setBright (\_ ->     20))
+  , ("<XF86KbdLightOnOff>"    , resetBright)
+  , ("<XF86Calculator>"       , resetBright)
+  , ("M-S-<F12>"              , resetBright)
   ]

@@ -14,6 +14,8 @@ module JonathasConceicao.Xmobar
   -- layoutIcons :: Logger -> Logger
   , highAndLowParameters -- Returns parameters for XMobar config of High and Low values in the Theme Colors
   -- highAndLowParameters :: ColorTheme -> String -> String -> [String]
+  , highAndLowParametersI -- Returns parameters for XMobar config of High and Low values in the Theme Colors with low and high colors swaped
+  -- highAndLowParameters :: ColorTheme -> String -> String -> [String]
   , withColor -- Paints string
   -- withColor :: String -> Color -> String
   )
@@ -77,7 +79,16 @@ highAndLowParameters colors lo hi =
   , "-H", hi
   , "--low"   , low colors
   , "--normal", normal colors
-  , "--high"  , high colors 
+  , "--high"  , high colors
+  ]
+
+highAndLowParametersI :: ColorTheme -> String -> String -> [String]
+highAndLowParametersI colors lo hi =
+  [ "-L", lo
+  , "-H", hi
+  , "--low"   , high colors
+  , "--normal", normal colors
+  , "--high"  , low colors
   ]
 
 withColor :: String -> Color -> String

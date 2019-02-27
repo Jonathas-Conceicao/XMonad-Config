@@ -6,12 +6,11 @@ import Xmobar
 import JonathasConceicao.Xmobar
   ( ColorTheme(..), withColor
   , icon
-  , draculaTheme, highAndLowParameters
+  , draculaTheme, highAndLowParameters, highAndLowParametersI
   )
 
 main :: IO ()
 main = xmobar config
-
 
 curTheme = draculaTheme
 myBgColor = background curTheme
@@ -22,8 +21,8 @@ myNmColor = normal curTheme
 myIcColor = icons curTheme
 myE0Color = extra0 curTheme
 
-
 addHiLo = highAndLowParameters curTheme
+addLoHi = highAndLowParametersI curTheme
 
 config :: Config
 config = defaultConfig
@@ -85,13 +84,22 @@ config = defaultConfig
                      ])
                  20
 
-               , Run $ Wireless "wlp3s0"
-                 ( [ "--template", "<qualityipat>"]
-                   ++ addHiLo "10" "70"
-                   ++ ["--", "--quality-icon-pattern", icon "wifi_%%.xbm"])
-                 20
+               , Run $ Battery
+                 ( ["--template", "<acstatus> <left>%"]
+                 ++ addLoHi "10" "70"
+                 ++ [ "--"
+                    , "-O", icon "batt_on.xbm" ++ icon "batt.xbm"
+                    , "-i", icon "batt_idle.xbm" ++ icon "batt.xbm"
+                    , "-o", icon "batt.xbm"
+                    ]
+                 ) 600
 
-               , Run $ Date "%A - %d %b(%m) %Y - %H:%M:%S" "date" 10
+               , Run $ DynNetwork
+                 (["--template", (icon "wifi_8.xbm") ++ " <rx>*<tx>"]
+                 -- ++ addHiLo "1" "50"
+                 ) 20
+
+               , Run $ DateZone "%A - %d %b(%m) %Y - %H:%M:%S" "" "" "date" 10
 
                , Run $ UnsafeStdinReader
                ]
@@ -103,7 +111,8 @@ config = defaultConfig
       ++ "| %UnsafeStdinReader% "
       ++ "} " ++ "%date%" `withColor` myE0Color
       ++ "{ %SBAR% "
-      ++ "| %wlp3s0wi% "
+      ++ "| %battery% "
+      ++ "| %dynnetwork% "
       ++ "| %bright% "
       ++ "| %default:Master% "
       ++ "| %cpu% "
