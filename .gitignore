@@ -31,3 +31,4 @@ prompt-history
 # XMobar compiled files
 xmobar
 xmobar.errors
+xmonadctl

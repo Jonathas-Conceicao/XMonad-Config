@@ -5,7 +5,7 @@
 import Xmobar
 import JonathasConceicao.Xmobar
   ( ColorTheme(..), withColor
-  , icon
+  , icon, xmobarAddAction, xmobarXMonadCmd
   , draculaTheme, highAndLowParameters, highAndLowParametersI
   )
 
@@ -46,8 +46,8 @@ config = defaultConfig
 
   -- Weather uses ICAO code, remeber to update the template call too
   -- [("SBPK", "Pelotas - RS"), ("SBAR", "Aracaju - SE")]
-  , commands = [ Run $ Weather "SBAR"
-                 (["--template", "Aracaju: <tempC>°C"]
+  , commands = [ Run $ Weather "SBPK"
+                 (["--template", "Satolep: <tempC>°C"]
                   ++ addHiLo "18" "25")
                  36000
 
@@ -67,21 +67,29 @@ config = defaultConfig
                  20
 
                , Run $ Brightness
-                 (["--template", icon "bright.xbm" ++ " <percent>%"]
-                  ++ addHiLo "9" "42"
-                  ++ ["--", "-D", "intel_backlight"])
+                 (addHiLo "9" "42" ++
+                  [ "--template"
+                  , xmobarXMonadCmd 1 "bright-reset"
+                  $ xmobarXMonadCmd 4 "bright-up"
+                  $ xmobarXMonadCmd 5 "bright-down"
+                  $ icon "bright.xbm" ++ " <percent>%"
+                  , "--", "-D", "intel_backlight"])
                  50
 
                , Run $ Volume
                  "default"
                  "Master"
-                 ([ "--template", "<status> <volume>%"]
-                  ++ addHiLo "10" "70"
-                  ++ ["--"
-                     , "--onc",  myFgColor, "--on",  "<volumeipat>"
-                     , "--offc", myFgColor, "--off", icon "sound_mute.xbm"
-                     , "--volume-icon-pattern",      icon "sound_%%.xbm"
-                     ])
+                 ( addHiLo "10" "70" ++
+                   [ "--template"
+                   , xmobarXMonadCmd 1 "volume-toggle-mute"
+                   $ xmobarXMonadCmd 4 "volume-up"
+                   $ xmobarXMonadCmd 5 "volume-down"
+                   $ "<status> <volume>%"
+                   ,"--"
+                   , "--onc",  myFgColor, "--on",  "<volumeipat>"
+                   , "--offc", myFgColor, "--off", icon "sound_mute.xbm"
+                   , "--volume-icon-pattern",      icon "sound_%%.xbm"
+                   ])
                  20
 
                , Run $ Battery
@@ -107,16 +115,16 @@ config = defaultConfig
   , sepChar = "%"
   , alignSep = "}{"
   , template = ""
-      ++ icon "Fedora_Icon.xbm"
+      ++ xmobarXMonadCmd 1 "workspace-free" (icon "Fedora_Icon.xbm")
       ++ "| %UnsafeStdinReader% "
       ++ "} " ++ "%date%" `withColor` myE0Color
-      ++ "{ %SBAR% "
+      ++ "{ %SBPK% "
       ++ "| %battery% "
       ++ "| %dynnetwork% "
       ++ "| %bright% "
       ++ "| %default:Master% "
       ++ "| %cpu% "
       ++ "| %memory% * %swap% "
-      ++ "| " ++ (icon "skull.xbm") `withColor` myHiColor
+      ++ "| " ++ xmobarXMonadCmd 1 "kill-focused" ((icon "skull.xbm") `withColor` myHiColor)
   }
 

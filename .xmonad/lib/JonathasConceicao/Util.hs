@@ -11,10 +11,12 @@ module JonathasConceicao.Util
   -- xdotool :: String -> String
   , hideString -- Consumes string
   -- hideString :: String -> String
+  , execScript -- Spawns script located at (xmonad path)/scripts
+   -- execScript :: MonadIO m => String -> m ()
   )
   where
 
-import XMonad (X(..), windows)
+import XMonad (X(..), MonadIO, windows, getXMonadDir, spawn)
 import Control.Exception (IOException)
 
 econst :: Monad m => a -> IOException -> m a
@@ -28,3 +30,9 @@ xdotool = (++) "xdotool key \\-\\-clearmodifiers "
 
 hideString :: String -> String
 hideString _ = ""
+
+execScript :: MonadIO m => String -> m ()
+execScript script = do
+  xmonadDir <- getXMonadDir
+  let path = xmonadDir ++ "/scripts/"
+  spawn $ "'" ++ path ++ script ++ "'"

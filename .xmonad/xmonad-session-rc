@@ -1,5 +1,4 @@
 #! /bin/bash
-export $PATH
 
 if [ -f $HOME/.bashrc ]; then
 	. $HOME/.bashrc

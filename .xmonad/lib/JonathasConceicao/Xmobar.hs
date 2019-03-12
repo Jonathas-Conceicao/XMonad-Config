@@ -8,6 +8,8 @@ module JonathasConceicao.Xmobar
   -- draculaTheme :: ColorTheme
   , xmobarAddAction -- wrap Action to xmobar config using xdotool
   -- xmobarAddAction :: Maybe Int -> String -> (String -> String)
+  , xmobarXMonadCmd -- Calls xmobarAddAction with a xmonadctl argument
+  -- xmobarXMonadCmd :: Maybe Int -> String -> (String -> String)
   , icon-- Add the `Icon`
   -- icon :: Icon -> String
   , layoutIcons -- Swap the Layout texts for the icons
@@ -54,15 +56,13 @@ draculaTheme =  ColorTheme
   , extra2     = "#F1FA8C"
   }
 
-xmobarAddAction :: Maybe Int -> String -> (String -> String)
-xmobarAddAction Nothing cmd =
-  wrap
-  ("<action=`" ++ cmd ++ "`>")
+xmobarAddAction :: Int -> String -> String -> String
+xmobarAddAction n cmd = wrap
+  ("<action=`bash -c '" ++ cmd ++ "'` button="++ (show n) ++">")
   "</action>"
-xmobarAddAction (Just n) cmd =
-  wrap
-  ("<action=`" ++ cmd ++ "` button="++ (show n) ++">")
-  "</action>"
+
+xmobarXMonadCmd :: Int -> String -> String -> String
+xmobarXMonadCmd n cmd = xmobarAddAction n ("xmonadctl " ++ cmd)
 
 icon :: Icon -> String
 icon icon = "<icon="++ icon ++ "/>"
