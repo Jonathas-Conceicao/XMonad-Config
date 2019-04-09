@@ -155,6 +155,9 @@ myXMonadCommands =
   , ("spotify-pause", execScript "spotify_pause.sh")
   , ("spotify-prev", execScript "spotify_prev.sh")
   , ("spotify-next", execScript "spotify_next.sh")
+
+  , ("dunst-pause", execScript "dunst_pause.sh")
+  , ("dunst-resume", execScript "dunst_resume.sh")
   ]
 
 myKeys =
