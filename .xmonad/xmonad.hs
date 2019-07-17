@@ -107,8 +107,19 @@ myHandleEventHook
   <+> fullscreenEventHook
   <+> (serverModeEventHookCmd' $ pure myXMonadCommands)
 
-myStartupHook =
+myStartupHook = do
   safeSpawn "ghc" ["--make", ".xmonad/tools/xmonadctl.hs"]
+  safeSpawn "compton"
+    [ "--backend", "glx"
+    , "--xrender-sync"
+    , "--xrender-sync-fence"
+    , "--fading", "--fade-delta=3"
+
+    -- Opacity rules to set window transparency using WM_CLASS Property
+    , "--opacity-rule", "90:class_g='Alacritty'"
+    , "--opacity-rule", "90:class_g='Emacs'"
+    , "--opacity-rule", "90:class_g='XTerm'"
+    ]
 
 myManageHook = composeAll
   [ manageDocks
