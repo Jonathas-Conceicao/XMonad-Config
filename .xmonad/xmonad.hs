@@ -33,6 +33,7 @@ import XMonad.Actions.CycleWS ( WSType( NonEmptyWS, EmptyWS )
                               , nextScreen, shiftToNext
                               , prevScreen, shiftToPrev
                               , nextWS, prevWS, moveTo)
+import XMonad.Layout.Spacing ( Border(..), spacingRaw )
 
 import XMonad.Prompt ( XPConfig, XPPosition (Top)
                      , font, position
@@ -67,13 +68,18 @@ main = do
     { modMask = mod4Mask -- Use Super instead of Alt
     , startupHook = setWMName "LG3D" >> myStartupHook
     , manageHook = manageHook def <+> myManageHook 
-    , layoutHook = lessBorders OnlyScreenFloat $ avoidStruts  $  layoutHook def
+    , layoutHook = myLayoutHook
     , logHook = dynamicLogWithPP $ myXMobarHook xmobarPipe
     , handleEventHook = handleEventHook def <+> myHandleEventHook
     , terminal = "xterm"
     } `additionalKeysP` myKeys
 
 {- My aliases -}
+
+myLayoutHook = spacingRaw False undefined False (Border 5 5 5 5) True
+  $ lessBorders OnlyScreenFloat
+  $ avoidStruts
+  $ layoutHook def
 
 myXMobarHook pipe = def
   { ppOutput  = hPutStrLn pipe

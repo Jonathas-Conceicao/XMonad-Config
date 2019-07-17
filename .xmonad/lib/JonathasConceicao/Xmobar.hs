@@ -26,6 +26,8 @@ module JonathasConceicao.Xmobar
 import XMonad.Util.Loggers (Logger)
 import XMonad.Hooks.DynamicLog (wrap)
 
+import Data.List (isInfixOf)
+
 -- Icons name on .xmonad/icons/ path
 type Icon = String
 -- Hex colors
@@ -68,10 +70,11 @@ icon :: Icon -> String
 icon icon = "<icon="++ icon ++ "/>"
 
 layoutIcons :: String -> String
-layoutIcons "Tall"        = icon "layout_tall.xbm"
-layoutIcons "Mirror Tall" = icon "layout_mirror.xbm"
-layoutIcons "Full"        = icon "layout_full.xbm"
-layoutIcons _             = icon "layout_err.xbm"
+layoutIcons s
+  | "Tall" `isInfixOf` s        = icon "layout_tall.xbm"
+  | "Mirror Tall" `isInfixOf` s = icon "layout_mirror.xbm"
+  | "Full" `isInfixOf` s        = icon "layout_full.xbm"
+  | otherwise = icon "layout_err.xbm"
 
 highAndLowParameters :: ColorTheme -> String -> String -> [String]
 highAndLowParameters colors lo hi =
