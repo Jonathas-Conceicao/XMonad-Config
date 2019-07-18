@@ -71,7 +71,7 @@ main = do
     , layoutHook = myLayoutHook
     , logHook = dynamicLogWithPP $ myXMobarHook xmobarPipe
     , handleEventHook = handleEventHook def <+> myHandleEventHook
-    , terminal = "xterm"
+    , terminal = "alacritty"
     } `additionalKeysP` myKeys
 
 {- My aliases -}
