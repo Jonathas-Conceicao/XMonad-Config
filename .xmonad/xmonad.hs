@@ -28,7 +28,7 @@ import XMonad.Hooks.EwmhDesktops ( ewmh, ewmhDesktopsEventHook
 import XMonad.Hooks.SetWMName ( setWMName )
 import XMonad.Hooks.ServerMode ( serverModeEventHookCmd' )
 import XMonad.Layout.NoBorders ( Ambiguity ( OnlyScreenFloat )
-                               , lessBorders)
+                               , lessBorders )
 import XMonad.Actions.CycleWS ( WSType( NonEmptyWS, EmptyWS )
                               , nextScreen, shiftToNext
                               , prevScreen, shiftToPrev
@@ -76,7 +76,7 @@ main = do
 
 {- My aliases -}
 
-myLayoutHook = spacingRaw False undefined False (Border 5 5 5 5) True
+myLayoutHook = spacingRaw False (Border 0 0 0 0) False (Border 5 5 5 5) True
   $ lessBorders OnlyScreenFloat
   $ avoidStruts
   $ layoutHook def
