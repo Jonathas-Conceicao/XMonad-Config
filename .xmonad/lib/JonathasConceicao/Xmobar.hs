@@ -71,9 +71,9 @@ icon icon = "<icon="++ icon ++ "/>"
 
 layoutIcons :: String -> String
 layoutIcons s
-  | "Tall" `isInfixOf` s        = icon "layout_tall.xbm"
-  | "Mirror Tall" `isInfixOf` s = icon "layout_mirror.xbm"
-  | "Full" `isInfixOf` s        = icon "layout_full.xbm"
+  | "Mirror" `isInfixOf` s = icon "layout_mirror.xbm"
+  | "Tall" `isInfixOf` s   = icon "layout_tall.xbm"
+  | "Full" `isInfixOf` s   = icon "layout_full.xbm"
   | otherwise = icon "layout_err.xbm"
 
 highAndLowParameters :: ColorTheme -> String -> String -> [String]
