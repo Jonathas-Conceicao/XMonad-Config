@@ -60,13 +60,13 @@ import JonathasConceicao.PlayerView
 
 main :: IO ()
 main = do
-  xmobarPipe <- spawnPipe "xmobar $HOME/.xmonad/xmobar.hs"
+  xmobarPipe <- spawnPipe "$HOME/.xmonad/xmobar"
   xmonad
     $ docks
     $ withUrgencyHook LibNotifyUrgencyHook
     $ ewmh def
     { modMask = mod4Mask -- Use Super instead of Alt
-    , startupHook = setWMName "LG3D" >> myStartupHook
+    , startupHook = myStartupHook -- setWMName "LG3D" >> myStartupHook
     , manageHook = manageHook def <+> myManageHook 
     , layoutHook = myLayoutHook
     , logHook = dynamicLogWithPP $ myXMobarHook xmobarPipe
@@ -102,24 +102,24 @@ myXMobarHook pipe = def
   , ppSep     = " | "
   }
 
+
 myHandleEventHook
   =   ewmhDesktopsEventHook
   <+> fullscreenEventHook
   <+> (serverModeEventHookCmd' $ pure myXMonadCommands)
 
 myStartupHook = do
-  safeSpawn "ghc" ["--make", ".xmonad/tools/xmonadctl.hs"]
   safeSpawn "compton"
     [ "--backend", "glx"
-    , "--xrender-sync"
     , "--xrender-sync-fence"
     , "--fading", "--fade-delta=3"
-
     -- Opacity rules to set window transparency using WM_CLASS Property
     , "--opacity-rule", "90:class_g='Alacritty'"
     , "--opacity-rule", "90:class_g='Emacs'"
     , "--opacity-rule", "90:class_g='XTerm'"
     ]
+
+  safeSpawn "dunst" []
 
 myManageHook = composeAll
   [ manageDocks

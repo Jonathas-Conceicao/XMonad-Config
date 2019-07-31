@@ -1,9 +1,0 @@
-#!/bin/bash
-
-if [ -f $HOME/.bashrc ]; then
-	. $HOME/.bashrc
-fi
-
-if [ -f $HOME/.xsession ]; then
-	. $HOME/.xsession
-fi

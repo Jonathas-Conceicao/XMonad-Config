@@ -1,0 +1,42 @@
+#! /bin/bash
+
+# Source definitions
+if [ -f $HOME/.bashrc ]; then
+	. $HOME/.bashrc
+fi
+
+if [ -f $HOME/.xsession ]; then
+	. $HOME/.xsession
+fi
+
+if [ -x /usr/bin/gnome-keyring-daemon ]; then
+	eval $(gnome-keyring-daemon --start)
+	export GNOME_KEYRING_SOCKET
+	export GNOME_KEYRING_PID
+fi
+
+ghc --make \
+		-dynamic \
+		-no-keep-hi-files \
+		-no-keep-o-files \
+		.xmonad/tools/xmonadctl.hs
+
+ghc --make \
+		-dynamic \
+		-no-keep-hi-files \
+		-no-keep-o-files \
+		-i.xmonad/lib \
+		-threaded \
+		.xmonad/xmobar.hs
+
+ghc -dynamic \
+		--make \
+		-i$XMONAD_HOME/lib \
+		-no-keep-hi-files \
+		-no-keep-o-files \
+		-o $HOME/.xmonad/xmonad-x86_64-linux \
+		$HOME/.xmonad/xmonad
+
+if [ -f $HOME/.xsession_errors ]; then mv $HOME/.xsession_errors $HOME/.xsession_errors.old; fi
+
+$HOME/.xmonad/xmonad-x86_64-linux 2> $HOME/.xsession_errors
