@@ -34,6 +34,7 @@ import XMonad.Actions.CycleWS ( WSType( NonEmptyWS, EmptyWS )
                               , prevScreen, shiftToPrev
                               , nextWS, prevWS, moveTo)
 import XMonad.Layout.Spacing ( Border(..), spacingRaw )
+import XMonad.Layout.Fullscreen ( fullscreenSupport )
 
 import XMonad.Prompt ( XPConfig, XPPosition (Top)
                      , font, position
@@ -62,6 +63,7 @@ main :: IO ()
 main = do
   xmobarPipe <- spawnPipe "$HOME/.xmonad/xmobar"
   xmonad
+    $ fullscreenSupport
     $ docks
     $ withUrgencyHook LibNotifyUrgencyHook
     $ ewmh def
