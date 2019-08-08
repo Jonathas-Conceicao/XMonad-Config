@@ -177,6 +177,8 @@ myXMonadCommands =
 
   , ("dunst-pause", execScript "dunst_pause.sh")
   , ("dunst-resume", execScript "dunst_resume.sh")
+
+  , ("lock", execScript "lockscreen.sh")
   ]
 
 myKeys =
