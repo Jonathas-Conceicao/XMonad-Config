@@ -2,11 +2,13 @@
 -- Author: Jonathas Conceição
 -- https://github.com/Jonathas-Conceicao
 
+{-# OPTIONS_GHC -fno-warn-missing-signatures #-}
+
 import Xmobar
 import JonathasConceicao.Xmobar
   ( ColorTheme(..), withColor
-  , icon, xmobarAddAction, xmobarXMonadCmd
-  , draculaTheme, highAndLowParameters, highAndLowParametersI
+  , icon, xmobarXMonadCmd, draculaTheme
+  , highAndLowParameters, highAndLowParametersI
   )
 
 main :: IO ()
@@ -16,9 +18,9 @@ curTheme = draculaTheme
 myBgColor = background curTheme
 myFgColor = foreground curTheme
 myHiColor = high curTheme
-myLoColor = low curTheme
-myNmColor = normal curTheme
-myIcColor = icons curTheme
+-- myLoColor = low curTheme
+-- myNmColor = normal curTheme
+-- myIcColor = icons curTheme
 myE0Color = extra0 curTheme
 
 addHiLo = highAndLowParameters curTheme

@@ -8,19 +8,10 @@ module JonathasConceicao.PlayerView
   )
   where
 
-import XMonad (X, Window
-              , windows
-              , windowset
-              , gets
-              , modify
-              , runQuery )
-import XMonad.StackSet (RationalRect (..)
-                       , float
-                       , sink
-                       , peek )
-import XMonad.Actions.CopyWindow ( copyToAll
-                                 , killAllOtherCopies )
-import XMonad.Hooks.FadeWindows ( isFloating )
+import XMonad (X, Window, windows, windowset, gets, runQuery)
+import XMonad.StackSet (RationalRect (..), float, sink, peek)
+import XMonad.Actions.CopyWindow (copyToAll, killAllOtherCopies)
+import XMonad.Hooks.FadeWindows (isFloating)
 
 togglePlayerView :: X ()
 togglePlayerView = do
@@ -33,7 +24,7 @@ togglePlayerView = do
         else w `floatTo` rr >> windows copyToAll
     Nothing -> return ()
   where
-    floatTo w rr = windows $ float w rr
+    floatTo w ret = windows $ float w ret
     rr = RationalRect 0.65 0.65 0.33 0.33
 
 {- Private utility functions -}

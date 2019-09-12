@@ -16,7 +16,7 @@ module JonathasConceicao.Util
   )
   where
 
-import XMonad (X(..), MonadIO, windows, getXMonadDir, spawn)
+import XMonad (X, MonadIO, windows, getXMonadDir, spawn)
 import Control.Exception (IOException)
 
 econst :: Monad m => a -> IOException -> m a

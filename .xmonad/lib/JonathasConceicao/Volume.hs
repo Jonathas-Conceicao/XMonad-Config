@@ -12,18 +12,10 @@ module JonathasConceicao.Volume
   )
   where
 
-import JonathasConceicao.Util
-  ( dummyStateUpdate
-  , econst
-  , xdotool
-  )
+import JonathasConceicao.Util (dummyStateUpdate)
 
-import XMonad (X, liftIO)
+import XMonad (X)
 import XMonad.Util.Run (safeSpawn)
-
-import Control.Exception (catch)
-import System.Process (runInteractiveCommand)
-import System.IO (hGetContents)
 
 toggleMute :: X ()
 toggleMute = do

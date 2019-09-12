@@ -2,7 +2,9 @@
 -- Author: Jonathas Conceição
 -- https://github.com/Jonathas-Conceicao
 
-import XMonad ( X(..), xmonad, def, (<+>)
+{-# OPTIONS_GHC -fno-warn-missing-signatures #-}
+
+import XMonad ( xmonad, def, (<+>)
               , terminal, modMask, mod4Mask, composeAll
               , startupHook, manageHook, layoutHook
               , logHook, handleEventHook )
@@ -25,7 +27,6 @@ import XMonad.Hooks.ManageDocks ( Direction1D ( Next, Prev )
                                 , docks, manageDocks, avoidStruts )
 import XMonad.Hooks.EwmhDesktops ( ewmh, ewmhDesktopsEventHook
                                  , fullscreenEventHook )
-import XMonad.Hooks.SetWMName ( setWMName )
 import XMonad.Hooks.ServerMode ( serverModeEventHookCmd' )
 import XMonad.Layout.NoBorders ( Ambiguity ( OnlyScreenFloat )
                                , lessBorders )
@@ -47,7 +48,6 @@ import XMonad.Prompt ( XPConfig, XPPosition (Top)
                      )
 import XMonad.Prompt.FuzzyMatch ( fuzzyMatch )
 import XMonad.Prompt.XMonad ( xmonadPromptC )
-import XMonad.Prompt.Input ( inputPrompt, (?+) )
 import XMonad.Prompt.ConfirmPrompt ( confirmPrompt )
 
 import JonathasConceicao.Volume
@@ -68,8 +68,8 @@ main = do
     $ withUrgencyHook LibNotifyUrgencyHook
     $ ewmh def
     { modMask = mod4Mask -- Use Super instead of Alt
-    , startupHook = myStartupHook -- setWMName "LG3D" >> myStartupHook
-    , manageHook = manageHook def <+> myManageHook 
+    , startupHook = myStartupHook
+    , manageHook = manageHook def <+> myManageHook
     , layoutHook = myLayoutHook
     , logHook = dynamicLogWithPP $ myXMobarHook xmobarPipe
     , handleEventHook = handleEventHook def <+> myHandleEventHook

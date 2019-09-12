@@ -13,7 +13,7 @@ module JonathasConceicao.Xmobar
   , icon-- Add the `Icon`
   -- icon :: Icon -> String
   , layoutIcons -- Swap the Layout texts for the icons
-  -- layoutIcons :: Logger -> Logger
+  -- layoutIcons :: String -> String
   , highAndLowParameters -- Returns parameters for XMobar config of High and Low values in the Theme Colors
   -- highAndLowParameters :: ColorTheme -> String -> String -> [String]
   , highAndLowParametersI -- Returns parameters for XMobar config of High and Low values in the Theme Colors with low and high colors swaped
@@ -23,7 +23,6 @@ module JonathasConceicao.Xmobar
   )
   where
 
-import XMonad.Util.Loggers (Logger)
 import XMonad.Hooks.DynamicLog (wrap)
 
 import Data.List (isInfixOf)
@@ -67,7 +66,7 @@ xmobarXMonadCmd :: Int -> String -> String -> String
 xmobarXMonadCmd n cmd = xmobarAddAction n ("xmonadctl " ++ cmd)
 
 icon :: Icon -> String
-icon icon = "<icon="++ icon ++ "/>"
+icon i = "<icon="++ i ++ "/>"
 
 layoutIcons :: String -> String
 layoutIcons s
