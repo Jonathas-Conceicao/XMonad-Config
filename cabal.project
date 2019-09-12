@@ -1,0 +1,17 @@
+packages: ./xmonad-setup.cabal
+keep-going: true
+shared: true
+constraints: base >= 4.11,
+             xmonad >= 0.15,
+             xmonad-contrib >= 0.15,
+             X11 >= 1.8,
+             xmobar >= 0.29,
+             xmobar +with_xft
+                    +with_utf8
+                    +with_iwlib
+                    +with_alsa
+                    +with_datezone
+                    +with_dbus
+                    +with_weather
+                    +with_threaded
+                    +with_rtsopts

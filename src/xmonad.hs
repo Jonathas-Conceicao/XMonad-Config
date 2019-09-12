@@ -61,7 +61,7 @@ import JonathasConceicao.PlayerView
 
 main :: IO ()
 main = do
-  xmobarPipe <- spawnPipe "$HOME/.xmonad/xmobar"
+  xmobarPipe <- spawnPipe "xmobar"
   xmonad
     $ fullscreenSupport
     $ docks

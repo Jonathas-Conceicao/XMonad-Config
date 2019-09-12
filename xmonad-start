@@ -1,0 +1,15 @@
+#! /bin/bash
+
+if [ -f $HOME/.xsession ]; then
+  . $HOME/.xsession
+fi
+
+if [ -x /usr/bin/gnome-keyring-daemon ]; then
+  eval $(gnome-keyring-daemon --start)
+  export GNOME_KEYRING_SOCKET
+  export GNOME_KEYRING_PID
+fi
+
+if [ -f $HOME/.xsession_errors ]; then mv $HOME/.xsession_errors $HOME/.xsession_errors.old; fi
+
+xmonad-x86_64-linux 2> $HOME/.xsession_errors

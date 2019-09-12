@@ -1,0 +1,44 @@
+cabal-version:       2.4
+
+name:                xmonad-setup
+version:             0.1.0.0
+synopsis:            My personal config for XMonad window manager and related software.
+homepage:            https://github.com/Jonathas-Conceicao/XMonad-Config
+license:             GPL-3.0-only
+license-file:        LICENSE
+author:              Jonathas-Conceicao
+maintainer:          jadoliveira@inf.ufpel.edu.br
+category:            System
+
+executable xmonadctl
+  main-is: xmonadctl.hs
+  ghc-options: -Wall
+               -Wextra
+               -Werror
+  build-depends: base, X11
+  hs-source-dirs: src
+  default-language: Haskell2010
+
+executable xmobar
+  main-is: xmobar.hs
+  ghc-options: -threaded
+               -Wall
+               -Wextra
+               -Werror
+  build-depends: base, xmonad-contrib, xmobar
+  hs-source-dirs: src
+  default-language: Haskell2010
+  other-modules: JonathasConceicao.Xmobar
+
+executable xmonad-x86_64-linux
+  main-is: xmonad.hs
+  ghc-options: -threaded
+               -Wall
+               -Wextra
+               -Werror
+  build-depends: base, xmonad, xmonad-contrib
+  hs-source-dirs: src
+  default-language: Haskell2010
+  other-modules: JonathasConceicao.Brightness, JonathasConceicao.Notification,
+                 JonathasConceicao.PlayerView, JonathasConceicao.Util,
+                 JonathasConceicao.Volume, JonathasConceicao.Xmobar
