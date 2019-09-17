@@ -1,10 +1,5 @@
 #! /bin/bash
 
-# Source definitions
-if [ -f $HOME/.bashrc ]; then
-	. $HOME/.bashrc
-fi
-
 if [ -f $HOME/.xsession ]; then
 	. $HOME/.xsession
 fi
@@ -35,7 +30,7 @@ ghc -dynamic \
 		-no-keep-hi-files \
 		-no-keep-o-files \
 		-o $HOME/.xmonad/xmonad-x86_64-linux \
-		$HOME/.xmonad/xmonad
+		$HOME/.xmonad/xmonad.hs
 
 if [ -f $HOME/.xsession_errors ]; then mv $HOME/.xsession_errors $HOME/.xsession_errors.old; fi
 
