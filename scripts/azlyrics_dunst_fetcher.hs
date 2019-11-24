@@ -3,8 +3,9 @@ import qualified System.Environment as Env
 import qualified System.Process as Proc
 import qualified Data.Char as CharUtil
 
-lyricsAppId :: String
-lyricsAppId = "750"  -- sum of ASCII values for "Spotify" just for fun
+stack_tag :: String
+stack_tag = tag_prefix ++ "azlyrics"
+  where tag_prefix = "string:x-dunst-stack-tag:"
 
 main :: IO ()
 main = do
@@ -14,8 +15,8 @@ main = do
        response <- Proc.readProcess
          "dunstify"
          [ "-a", "AzLyrics"
+         , "-h", stack_tag
          , "-u", urgency
-         , "-r", lyricsAppId
          , "-A", "azlyrics,default"
          , summary, body
          ] []
@@ -28,8 +29,8 @@ notify_lyrics :: String -> String -> IO ()
 notify_lyrics artist song = do
   Proc.callProcess
         "dunstify"
-        [ "-a", "Lyrics"
-        , "-r", lyricsAppId
+        [ "-a", "AzLyrics"
+        , "-h", stack_tag
         , "-t", "0"
         , "-u", "LOW"
         , artist ++ " - " ++ song, "Fetching..."
@@ -42,8 +43,8 @@ notify_lyrics artist song = do
     notify_blocks (stanza: ss) = do
       rep <- Proc.readProcess
         "dunstify"
-        [ "-a", "Lyrics"
-        , "-r", lyricsAppId
+        [ "-a", "AzLyrics"
+        , "-h", stack_tag
         , "-t", "0"
         , "-u", "LOW"
         , "-A", "continue,default"
