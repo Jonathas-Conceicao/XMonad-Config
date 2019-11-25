@@ -1,7 +1,7 @@
 packages: ./xmonad-setup.cabal
 keep-going: true
 shared: true
-constraints: base >= 4.11,
+constraints: base >= 4.10,
              xmonad >= 0.15,
              xmonad-contrib >= 0.15,
              X11 >= 1.8,
