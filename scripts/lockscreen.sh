@@ -16,8 +16,10 @@ convert \
 
 feh -ZYFxN $LOCKSCREEN_FILE &
 FEH_PID=$!
+xmonadctl dunst-pause
 
 xl
 
+xmonadctl dunst-resume
 kill -TERM $FEH_PID
 rm $LOCKSCREEN_FILE
