@@ -15,3 +15,9 @@ constraints: base >= 4.11,
                     +with_weather
                     +with_threaded
                     +with_rtsopts
+
+source-repository-package
+    type: git
+    location: git@github.com:lehins/uuid.git
+    tag: a744cd0a72f984793fd48b93ca4b6aee54fa8358
+    subdir: uuid-types
