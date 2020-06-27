@@ -42,7 +42,7 @@ config = defaultConfig
   , pickBroadest = False
   , persistent = False
   , hideOnStart = False
-  , iconRoot = ".xmonad/icons/" -- Path is relative to where XMobar is launched
+  , iconRoot = "/home/jonathas/.xmonad/icons/"
   , allDesktops = True
   , overrideRedirect = True
 
