@@ -46,12 +46,24 @@ config = defaultConfig
   , allDesktops = True
   , overrideRedirect = True
 
-  -- Weather uses ICAO code, remeber to update the template call too
+  -- WeatherX uses ICAO code, remeber to update the template call too
   -- [("SBPK", "Pelotas - RS"), ("SBAR", "Aracaju - SE")]
-  , commands = [ Run $ Weather "SBPK"
-                 (["--template", "Satolep: <tempC>°C"]
-                  ++ addHiLo "18" "25")
-                 36000
+  , commands = [ Run $ WeatherX "SBPK"
+                 [ ("clear", "Clear")
+                 , ("sunny", "Sunny")
+                 , ("mostly clear", "M-Clear")
+                 , ("mostly sunny", "M-sunny")
+                 , ("partly sunny", "P-sunny")
+                 , ("fair", "Fair")
+                 , ("cloudy", "Cloudy")
+                 , ("overcast", "Overcast")
+                 , ("partly cloudy", "P-Cloudy")
+                 , ("mostly cloudy", "M-Cloudy")
+                 , ("considerable cloudiness", "Raining")
+                 ]
+                 (["--template", "Satolep: <tempC>°C <skyConditionS> <rh>%  <windKmh>km/h"]
+                   ++ addHiLo "18" "25")
+                 18000
 
                , Run $ Cpu
                  (["--template", icon "cpu.xbm" ++ " <total>%"]
