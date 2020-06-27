@@ -111,7 +111,7 @@ myHandleEventHook
   <+> (serverModeEventHookCmd' $ pure myXMonadCommands)
 
 myStartupHook = do
-  safeSpawn "compton"
+  safeSpawn "picom"
     [ "--backend", "glx"
     , "--xrender-sync-fence"
     , "--fading", "--fade-delta=3"
