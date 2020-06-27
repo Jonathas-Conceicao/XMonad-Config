@@ -1,11 +1,11 @@
 packages: ./xmonad-setup.cabal
 keep-going: true
 shared: true
-constraints: base >= 4.10,
+constraints: base >= 4.11,
              xmonad >= 0.15,
              xmonad-contrib >= 0.15,
              X11 >= 1.8,
-             xmobar >= 0.29,
+             xmobar >= 0.35,
              xmobar +with_xft
                     +with_utf8
                     +with_iwlib
