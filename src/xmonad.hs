@@ -224,10 +224,10 @@ myKeys =
   , ("C-S-<Print>", safeSpawn "gnome-screenshot" ["--window"])
 
   -- Spotify media control
-  , ("<XF86AudioPlay>", execScript "spotify_toggle_play.sh")
-  , ("<XF86AudioStop>", execScript "spotify_pause.sh")
-  , ("<XF86AudioPrev>", execScript "spotify_prev.sh")
-  , ("<XF86AudioNext>", execScript "spotify_next.sh")
+  , ("<XF86AudioPlay>", safeSpawn "playerctl" ["play-pause"])
+  , ("<XF86AudioStop>", safeSpawn "playerctl" ["stop"])
+  , ("<XF86AudioPrev>", safeSpawn "playerctl" ["prev"])
+  , ("<XF86AudioNext>", safeSpawn "playerctl" ["next"])
 
   -- Audio control
   , ("<XF86AudioLowerVolume>", lowerVolume 3)
