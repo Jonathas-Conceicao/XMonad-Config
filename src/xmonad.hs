@@ -108,7 +108,7 @@ myXMobarHook pipe = def
 myHandleEventHook
   =   ewmhDesktopsEventHook
   <+> fullscreenEventHook
-  <+> (serverModeEventHookCmd' $ pure myXMonadCommands)
+  <+> (serverModeEventHookCmd' myXMonadCommands)
 
 myStartupHook = do
   safeSpawn "picom"
@@ -143,43 +143,37 @@ myPrompt = def
 
 confirm = confirmPrompt myPrompt
 
-myXMonadPrompt = xmonadPromptC myXMonadCommands myPrompt
+myXMonadPrompt = do
+  list <- myXMonadCommands
+  xmonadPromptC list myPrompt
 
-myXMonadCommands =
-  [ ("window-next", windows focusDown)
-  , ("window-prev", windows focusUp)
-  , ("window-master", windows focusMaster)
-  , ("screen-next", nextScreen)
-  , ("screen-prev", prevScreen)
-  , ("workspace-next", moveTo Next NonEmptyWS)
-  , ("workspace-prev", moveTo Prev NonEmptyWS)
-  , ("workspace-free", moveTo Next EmptyWS)
-  , ("layout-next", sendMessage NextLayout)
-  , ("togglePlayerView", togglePlayerView)
+myXMonadCommands = do
+  let cmds = [ ("window-next", windows focusDown)
+             , ("window-prev", windows focusUp)
+             , ("window-master", windows focusMaster)
+             , ("screen-next", nextScreen)
+             , ("screen-prev", prevScreen)
+             , ("workspace-next", moveTo Next NonEmptyWS)
+             , ("workspace-prev", moveTo Prev NonEmptyWS)
+             , ("workspace-free", moveTo Next EmptyWS)
+             , ("layout-next", sendMessage NextLayout)
+             , ("togglePlayerView", togglePlayerView)
 
-  , ("kill-focused", kill)
+             , ("kill-focused", kill)
 
-  , ("reboot", confirm "Reboot now?" $ safeSpawn "shutdown" ["--reboot", "0"])
-  , ("poweroff", confirm "Poweroff now?" $ safeSpawn "shutdown" ["--poweroff", "0"])
+             , ("reboot", confirm "Reboot now?" $ safeSpawn "shutdown" ["--reboot", "0"])
+             , ("poweroff", confirm "Poweroff now?" $ safeSpawn "shutdown" ["--poweroff", "0"])
 
-  , ("volume-up", raiseVolume 3)
-  , ("volume-down", lowerVolume 3)
-  , ("volume-toggle-mute", toggleMute)
+             , ("volume-up", raiseVolume 3)
+             , ("volume-down", lowerVolume 3)
+             , ("volume-toggle-mute", toggleMute)
 
-  , ("bright-up", raiseBright 3)
-  , ("bright-down", lowerBright 3)
-  , ("bright-reset", resetBright)
-
-  , ("spotify-togle-play", execScript "spotify_toggle_play.sh")
-  , ("spotify-pause", execScript "spotify_pause.sh")
-  , ("spotify-prev", execScript "spotify_prev.sh")
-  , ("spotify-next", execScript "spotify_next.sh")
-
-  , ("dunst-pause", execScript "dunst_pause.sh")
-  , ("dunst-resume", execScript "dunst_resume.sh")
-
-  , ("lock", execScript "lockscreen.sh")
-  ]
+             , ("bright-up", raiseBright 3)
+             , ("bright-down", lowerBright 3)
+             , ("bright-reset", resetBright)
+             ];
+  scripts <- commandsFromScriptsDir
+  return $ cmds ++ scripts
 
 myKeys =
   [ ("M-x", myXMonadPrompt) -- Prompt for running XMonad commands
