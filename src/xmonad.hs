@@ -129,7 +129,7 @@ myManageHook = composeAll
 
 myPrompt :: XPConfig
 myPrompt = def
-  { font = "xft:Bitstream DejaVu Sans Mono Book:size=9:bold:antialias=true"
+  { font = "xft:Bitstream DejaVu Sans Mono Book:size=6:bold:antialias=true"
   , bgColor = "#282A36"
   , fgColor = "#F8F8F2"
   , bgHLight = "#6272A4"
@@ -180,7 +180,7 @@ myKeys =
 
   -- , ("M-S-p", )
   -- Runs dmenu with my config
-  , ("M-p", safeSpawn "dmenu_run" [ "-fn", "xft:Bitstream DejaVu Sans Mono Book:size=9:bold:antialias=true",
+  , ("M-p", safeSpawn "dmenu_run" [ "-fn", "xft:Bitstream DejaVu Sans Mono Book:size=6:bold:antialias=true",
                                     "-p", "$>",
                                     "-nb", "#282A36",
                                     "-nf", "#F8F8F2",
