@@ -16,7 +16,7 @@ module JonathasConceicao.Util
   )
   where
 
-import XMonad (X, windows, getXMonadDir, spawn, liftIO)
+import XMonad (X, windows, asks, directories, cfgDir, spawn, liftIO)
 import Control.Exception (IOException)
 import System.Directory (getDirectoryContents)
 
@@ -34,7 +34,7 @@ hideString _ = ""
 
 commandsFromScriptsDir :: X [(String, X ())]
 commandsFromScriptsDir = do
-  path <- flip (++) "/scripts/" <$> getXMonadDir
+  path <- flip (++) "/scripts/" <$> asks (cfgDir . directories)
   scripts <- liftIO $ getDirectoryContents path
   return [ (script, cmd)
          | script <- filter (/= ".")

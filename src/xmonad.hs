@@ -25,12 +25,12 @@ import XMonad.Hooks.DynamicLog ( dynamicLogWithPP
                                , shorten )
 import XMonad.Hooks.ManageDocks ( Direction1D ( Next, Prev )
                                 , docks, manageDocks, avoidStruts )
-import XMonad.Hooks.EwmhDesktops ( ewmh, ewmhDesktopsEventHook
-                                 , fullscreenEventHook )
+import XMonad.Hooks.EwmhDesktops ( ewmh, ewmhFullscreen )
 import XMonad.Hooks.ServerMode ( serverModeEventHookCmd' )
 import XMonad.Layout.NoBorders ( Ambiguity ( OnlyScreenFloat )
                                , lessBorders )
-import XMonad.Actions.CycleWS ( WSType( NonEmptyWS, EmptyWS )
+import XMonad.Actions.CycleWS ( WSType( Not )
+                              , emptyWS
                               , nextScreen, shiftToNext
                               , prevScreen, shiftToPrev
                               , nextWS, prevWS, moveTo)
@@ -66,7 +66,9 @@ main = do
     $ fullscreenSupport
     $ docks
     $ withUrgencyHook LibNotifyUrgencyHook
-    $ ewmh def
+    $ ewmhFullscreen
+    $ ewmh
+    def
     { modMask = mod4Mask -- Use Super instead of Alt
     , startupHook = myStartupHook
     , manageHook = manageHook def <+> myManageHook
@@ -106,9 +108,7 @@ myXMobarHook pipe = def
 
 
 myHandleEventHook
-  =   ewmhDesktopsEventHook
-  <+> fullscreenEventHook
-  <+> (serverModeEventHookCmd' myXMonadCommands)
+  = (serverModeEventHookCmd' myXMonadCommands)
 
 myStartupHook = do
   safeSpawn "picom"
@@ -153,9 +153,9 @@ myXMonadCommands = do
              , ("window-master", windows focusMaster)
              , ("screen-next", nextScreen)
              , ("screen-prev", prevScreen)
-             , ("workspace-next", moveTo Next NonEmptyWS)
-             , ("workspace-prev", moveTo Prev NonEmptyWS)
-             , ("workspace-free", moveTo Next EmptyWS)
+             , ("workspace-next", moveTo Next $ Not emptyWS)
+             , ("workspace-prev", moveTo Prev $ Not emptyWS)
+             , ("workspace-free", moveTo Next emptyWS)
              , ("layout-next", sendMessage NextLayout)
              , ("togglePlayerView", togglePlayerView)
 
@@ -194,11 +194,11 @@ myKeys =
   , ("M-S-<Tab>", nextScreen)
 
   -- Moving from Workspace
-  , ("M-d",       moveTo Next NonEmptyWS)
-  , ("M-<Right>", moveTo Next NonEmptyWS)
+  , ("M-d",       moveTo Next $ Not emptyWS)
+  , ("M-<Right>", moveTo Next $ Not emptyWS)
 
-  , ("M-a",      moveTo Prev NonEmptyWS)
-  , ("M-<Left>", moveTo Prev NonEmptyWS)
+  , ("M-a",      moveTo Prev $ Not emptyWS)
+  , ("M-<Left>", moveTo Prev $ Not emptyWS)
 
   , ("M-S-d",       shiftToNext >> nextWS)
   , ("M-S-<Right>", shiftToNext >> nextWS)
@@ -206,7 +206,7 @@ myKeys =
   , ("M-S-a",      shiftToPrev >> prevWS)
   , ("M-S-<Left>", shiftToPrev >> prevWS)
 
-  , ("M-n",        moveTo Next EmptyWS)
+  , ("M-n",        moveTo Next emptyWS)
 
   -- Set window to Player View Mode
   , ("M-f", togglePlayerView)
