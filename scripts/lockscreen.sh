@@ -16,10 +16,12 @@ convert \
 
 feh -ZYFxN $LOCKSCREEN_FILE &
 FEH_PID=$!
-xmonadctl dunst-pause
+
+DUNST_STATE="$(dunstctl is-paused)"
+dunstctl set-paused true
 
 XLPASSWD=trustnobody /home/jonathas/Repositories/xl/xl
 
-xmonadctl dunst-resume
+dunstctl set-paused $DUNST_STATE
 kill -TERM $FEH_PID
 rm $LOCKSCREEN_FILE

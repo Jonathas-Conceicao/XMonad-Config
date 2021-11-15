@@ -245,4 +245,11 @@ myKeys =
   , ("<XF86KbdLightOnOff>"    , resetBright)
   , ("<XF86Calculator>"       , resetBright)
   , ("M-S-<F12>"              , resetBright)
+
+  -- dunst (notification service) control
+  -- M1 denotates the Left Alt key
+  , ("M-M1-S-<Space>", safeSpawn "dunstctl" ["close-all"])
+  , ("M-M1-<Space>"  , safeSpawn "dunstctl" ["close"])
+  , ("M-M1-h"        , safeSpawn "dunstctl" ["history-pop"])
+  , ("M-M1-j"        , safeSpawn "dunstctl" ["context"])
   ]
