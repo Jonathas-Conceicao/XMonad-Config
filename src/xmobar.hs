@@ -28,7 +28,7 @@ addLoHi = highAndLowParametersI curTheme
 
 config :: Config
 config = defaultConfig
-  { font = "xft:Bitstream DejaVu Sans Mono Book:size=6:bold:antialias=true"
+  { font = "xft:Bitstream DejaVu Sans Mono Book:size=9:bold:antialias=true"
   , additionalFonts = []
   , borderColor = myBgColor
   , border = TopB
