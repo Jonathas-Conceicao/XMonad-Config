@@ -21,13 +21,26 @@ function notify_print() {
 
 notify_print "Fetching image"
 
-POSTDATA=$(wget -qO- 'https://www.reddit.com/r/wallpapers/top.json?limit=1&t=week'| jq -r .data.children[-1].data)
+echo $#
+if [ "$#" -ne 1 ]; then
+  POST=1
+else
+  POST=$1
+fi
+POSTDATA=$(wget -qO- "https://www.reddit.com/r/wallpapers/top.json?limit=$POST&t=week"| jq -r .data.children[-1].data)
 POSTDATA_URL=$(echo $POSTDATA | jq -r .url)
 
 echo $POSTDATA_URL
 
+echo $#
+if [ "$#" -ne 2 ]; then
+  GALLERY_ITEM=0
+else
+  GALLERY_ITEM=$2
+fi
+
 if [[ $POSTDATA_URL == *"reddit.com/gallery/"* ]]; then
-  BASEURL=https://i.redd.it/$(echo $POSTDATA | jq -r .gallery_data.items[0].media_id)
+  BASEURL=https://i.redd.it/$(echo $POSTDATA | jq -r .gallery_data.items[$GALLERY_ITEM].media_id)
   wget $BASEURL.jpg -O /tmp/wallpaper || wget $BASEURL.png -O /tmp/wallpaper
 else
   wget $POSTDATA_URL -O /tmp/wallpaper
