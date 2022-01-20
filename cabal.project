@@ -2,11 +2,14 @@ packages: ./xmonad-setup.cabal
 keep-going: true
 shared: true
 constraints: base >= 4.11,
+             X11 >= 1.8,
+             alsa-mixer >= 0.3,
+             async >= 2,
              directory >= 1.3,
+             monad-extras >= 0.6,
+             xmobar >= 0.35,
              xmonad >= 0.17,
              xmonad-contrib >= 0.17,
-             X11 >= 1.8,
-             xmobar >= 0.35,
              xmobar +with_xft
                     +with_utf8
                     +with_iwlib

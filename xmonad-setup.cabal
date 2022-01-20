@@ -42,3 +42,16 @@ executable xmonad-x86_64-linux
   other-modules: JonathasConceicao.Brightness, JonathasConceicao.Notification,
                  JonathasConceicao.PlayerView, JonathasConceicao.Util,
                  JonathasConceicao.Volume, JonathasConceicao.Xmobar
+
+executable xmonad-display
+  main-is: xmonad-display.hs
+  ghc-options: -Wall
+               -Wextra
+               -Werror
+  build-depends:base,
+                X11,
+                alsa-mixer,
+                async,
+                monad-extras
+  hs-source-dirs:   src
+  default-language: Haskell2010

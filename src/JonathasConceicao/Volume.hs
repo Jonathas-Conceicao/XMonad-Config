@@ -20,15 +20,18 @@ import XMonad.Util.Run (safeSpawn)
 toggleMute :: X ()
 toggleMute = do
   safeSpawn "amixer" ["sset", "Master", "toggle"]
+  safeSpawn "xmonad-display" []
   dummyStateUpdate
 
 lowerVolume :: Int -> X ()
 lowerVolume n = do
   safeSpawn "amixer" ["sset", "Master", (show n) ++ "%-", "-q"]
+  safeSpawn "xmonad-display" []
   dummyStateUpdate
 
 raiseVolume :: Int -> X ()
 raiseVolume n = do
   safeSpawn "amixer" ["sset", "Master", (show n) ++ "%+", "-q"]
+  safeSpawn "xmonad-display" []
   dummyStateUpdate
 
