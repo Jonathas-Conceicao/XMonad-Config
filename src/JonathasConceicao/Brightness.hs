@@ -25,21 +25,32 @@ import System.IO ( withFile
                  )
 
 resetBright :: X ()
-resetBright = safeSpawn "brightnessctl" ["set", "20"]
+resetBright = do
+  safeSpawn "brightnessctl" ["set", "20"]
+  safeSpawn "xmonad-display" ["Brightness"]
+
 
 raiseBright :: Int -> X ()
-raiseBright n = safeSpawn "brightnessctl" ["set", "+" ++ (show n) ++ "%"]
+raiseBright n = do
+  safeSpawn "brightnessctl" ["set", "+" ++ (show n) ++ "%"]
+  safeSpawn "xmonad-display" ["Brightness"]
+
 
 lowerBright :: Int -> X ()
-lowerBright n = safeSpawn "brightnessctl" ["set", (show n) ++ "%" ++ "-"]
+lowerBright n = do
+  safeSpawn "brightnessctl" ["set", (show n) ++ "%" ++ "-"]
+  safeSpawn "xmonad-display" ["Brightness"]
 
 setBright :: (Int -> Int) -> X ()
-setBright f = liftIO $ withFile brightFile ReadWriteMode $ alterFile f
+setBright f = do
+  liftIO $ withFile brightFile ReadWriteMode $ alterFile f
+  safeSpawn "xmonad-display" ["Brightness"]
 
 {- Private utility functions -}
 
 brightFile :: FilePath
 brightFile = "/sys/class/backlight/intel_backlight/brightness"
+
 alterFile :: (Show a, Read a) => (a -> a) -> Handle -> IO ()
 alterFile f h = do
   curr <- hGetLine h

@@ -9,16 +9,24 @@ import Data.Maybe (fromJust)
 import Graphics.X11.Xlib
 import Graphics.X11.Xlib.Extras (fetchName, queryTree)
 import Sound.ALSA.Mixer
+import System.Environment (getArgs)
 import System.Exit (ExitCode (..), exitWith)
 import System.Mem.Weak (addFinalizer)
 
+data Mode
+  = Media
+  | Brightness
+  deriving (Read, Show)
+
 main :: IO ()
 main = do
-  drawBar displayData
+  args <- getArgs
+  let mode = read $ args !! 0
+  drawBar mode
   exitWith ExitSuccess
 
-drawBar :: IO (Integer) -> IO ()
-drawBar info = do
+drawBar :: Mode -> IO ()
+drawBar mode = do
   dpy <- openDisplay ""
   let dflt = defaultScreen dpy
       scr = defaultScreenOfDisplay dpy
@@ -35,15 +43,15 @@ drawBar info = do
       loop dpy win gc font pixmap
   where
     loop dpy win gc font pixmap = do
-      cur_info <- info
-      drawInWin dpy win gc font pixmap cur_info
+      cur_info <- modeFunction mode
+      drawInWin dpy win gc font pixmap (modeIcon mode) cur_info
       sync dpy False
       res <- race (waitChange cur_info) timeout
       case res of
         Left _ -> loop dpy win gc font pixmap
         Right _ -> return ()
     waitChange cur = do
-      new <- info
+      new <- modeFunction mode
       if cur /= new
         then return ()
         else threadDelay (300 * 1000) >> waitChange cur
@@ -55,8 +63,16 @@ alreadyOpen dpy xs = do
   mNames <- sequence $ fetchName dpy <$> xs
   return $ any (== Just "xmonad-display-media") mNames
 
-displayData :: IO Integer
-displayData = withMixer "default" $ \mixer -> do
+modeFunction :: Mode -> IO Integer
+modeFunction Brightness = brightnessInfo
+modeFunction Media = mediaInfo
+
+modeIcon :: Mode -> FilePath
+modeIcon Brightness = "/home/jonathas/.xmonad/icons/bright.xbm"
+modeIcon Media = "/home/jonathas/.xmonad/icons/sound_8.xbm"
+
+mediaInfo :: IO Integer
+mediaInfo = withMixer "default" $ \mixer -> do
   control <- getControlByName mixer "Master"
   vol <- getVolume control
   return $ fromJust vol
@@ -69,9 +85,17 @@ displayData = withMixer "default" $ \mixer -> do
       mvol <- getChannel FrontLeft $ value volumeStructure
       return $ (\v -> round $ toRational v / (toRational limit / 100)) <$> mvol
 
-drawImage :: Display -> Window -> GC -> IO ()
-drawImage dpy win gc = do
-  res <- readBitmapFile dpy win "/home/jonathas/.xmonad/icons/sound_8.xbm"
+brightnessInfo :: IO Integer
+brightnessInfo = do
+  maxBright <- readFileValue "/sys/class/backlight/intel_backlight/max_brightness"
+  curBright <- readFileValue "/sys/class/backlight/intel_backlight/brightness"
+  return (round $ toRational curBright / (toRational maxBright / 100))
+  where
+    readFileValue f = readFile f >>= (\d -> return $ read $ d :: IO Integer)
+
+drawImage :: Display -> Window -> GC -> FilePath -> IO ()
+drawImage dpy win gc icon = do
+  res <- readBitmapFile dpy win $ icon
   case res of
     Left s -> error $ "Failed to load image:" ++ s
     Right (w, h, p, _, _) -> do
@@ -97,13 +121,14 @@ drawInWin ::
   GC ->
   FontStruct ->
   Pixmap ->
+  FilePath ->
   a ->
   IO ()
-drawInWin dpy win gc font p val = do
+drawInWin dpy win gc font p icon val = do
   drawnBackground dpy p gc
   drawnFilled dpy p gc val
   drawnValue dpy p gc font val
-  drawImage dpy p gc
+  drawImage dpy p gc icon
   copyArea dpy p win gc 0 0 40 180 0 0
 
 drawnBackground ::
