@@ -25,6 +25,7 @@ cabal.project.local~
 # Emacs swap files
 .\#*
 \#*
+*.~*
 
 # XMonad files
 xmonad.errors
