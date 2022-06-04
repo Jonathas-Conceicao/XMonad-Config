@@ -1,15 +1,14 @@
 -- XMobar Config
 -- Author: Jonathas Conceição
 -- https://github.com/Jonathas-Conceicao
-
 {-# OPTIONS_GHC -fno-warn-missing-signatures #-}
 
-import Xmobar
 import JonathasConceicao.Xmobar
   ( ColorTheme(..), withColor
   , icon, xmobarXMonadCmd, draculaTheme
   , highAndLowParameters, highAndLowParametersI
   )
+import Xmobar
 
 main :: IO ()
 main = xmobar config
@@ -24,6 +23,7 @@ myHiColor = high curTheme
 myE0Color = extra0 curTheme
 
 addHiLo = highAndLowParameters curTheme
+
 addLoHi = highAndLowParametersI curTheme
 
 config :: Config
@@ -34,7 +34,7 @@ config = defaultConfig
   , border = TopB
   , bgColor = myBgColor
   , fgColor = myFgColor
-  , alpha = 55
+  , alpha = 105
   , position = Top
   , textOffset = -1
   , iconOffset = -1
@@ -122,6 +122,7 @@ config = defaultConfig
                  ) 20
 
                , Run $ DateZone "%A - %d %b(%m) %Y - %H:%M:%S" "" "" "date" 10
+               , Run $ DateZone "%H:%M:%S" "" "Europe/London" "uk_time" 10
 
                , Run $ UnsafeStdinReader
                ]
@@ -132,6 +133,7 @@ config = defaultConfig
       ++ xmobarXMonadCmd 1 "workspace-free" (icon "Fedora_Icon.xbm")
       ++ "| %UnsafeStdinReader% "
       ++ "} " ++ "%date%" `withColor` myE0Color
+      ++ " (%uk_time%)" `withColor` myE0Color
       ++ "{ %SBPK% "
       ++ "| %battery% "
       ++ "| %dynnetwork% "
