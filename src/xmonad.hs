@@ -165,8 +165,12 @@ myXMonadCommands = do
 
              , ("kill-focused", kill)
 
-             , ("reboot", confirm "Reboot now?" $ safeSpawn "shutdown" ["--reboot", "0"])
-             , ("poweroff", confirm "Poweroff now?" $ safeSpawn "shutdown" ["--poweroff", "0"])
+             , ("reboot", confirm "Reboot now?" $
+                 safeSpawn "killall" ["--quit", "--ignore-case", "brave"] >>
+                 safeSpawn "shutdown" ["--reboot", "0"])
+             , ("poweroff", confirm "Poweroff now?" $
+                 safeSpawn "killall" ["--quit", "--ignore-case", "brave"] >>
+                 safeSpawn "shutdown" ["--poweroff", "0"])
 
              , ("volume-up", raiseVolume 3)
              , ("volume-down", lowerVolume 3)
