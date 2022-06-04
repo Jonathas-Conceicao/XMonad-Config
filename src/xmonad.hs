@@ -15,6 +15,9 @@ import XMonad.Layout (ChangeLayout ( NextLayout ))
 import XMonad.Util.Run (spawnPipe, safeSpawn, hPutStrLn)
 import XMonad.Util.EZConfig ( additionalKeysP )
 
+import XMonad.ManageHook (doFloat, className, stringProperty
+                         , (-->), (=?) )
+import XMonad.Hooks.Place (placeHook, simpleSmart)
 import XMonad.Hooks.UrgencyHook (withUrgencyHook)
 import XMonad.Hooks.DynamicLog ( dynamicLogWithPP
                                , ppOutput, ppCurrent, ppVisible
@@ -69,7 +72,7 @@ main = do
     def
     { modMask = mod4Mask -- Use Super instead of Alt
     , startupHook = myStartupHook
-    , manageHook = manageHook def <+> myManageHook
+    , manageHook = myManageHook <+> def manageHook
     , layoutHook = myLayoutHook
     , logHook = dynamicLogWithPP $ myXMobarHook xmobarPipe
     , handleEventHook = handleEventHook def <+> myHandleEventHook
@@ -122,7 +125,10 @@ myStartupHook = do
   safeSpawn "dunst" []
 
 myManageHook = composeAll
-  [ manageDocks
+  [ placeHook simpleSmart
+  , stringProperty "WM_WINDOW_ROLE" =? "pop-up" --> doFloat
+  , className =? "Xmessage" --> doFloat
+  , manageDocks
   ]
 
 myPrompt :: XPConfig
