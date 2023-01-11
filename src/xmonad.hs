@@ -127,6 +127,8 @@ myStartupHook = do
 myManageHook = composeAll
   [ placeHook simpleSmart
   , stringProperty "WM_WINDOW_ROLE" =? "pop-up" --> doFloat
+  , stringProperty "WM_NAME" =? "Task Manager - Brave" --> doFloat
+  , stringProperty "_NET_WM_STATE_ABOVE" =? "_NET_WM_STATE_FULLSCREEN" --> doFloat
   , className =? "Xmessage" --> doFloat
   , manageDocks
   ]
@@ -189,6 +191,13 @@ myKeys =
   -- , ("M-S-p", )
   -- Runs dmenu with my config
   , ("M-p", safeSpawn "dmenu_run" [ "-fn", "xft:Bitstream DejaVu Sans Mono Book:size=9:bold:antialias=true",
+                                    "-p", "$>",
+                                    "-nb", "#282A36",
+                                    "-nf", "#F8F8F2",
+                                    "-sb", "#6272A4",
+                                    "-sf", "#F8F8F2"
+                                  ])
+  , ("M-r", safeSpawn "dmenu_run" [ "-fn", "xft:Bitstream DejaVu Sans Mono Book:size=9:bold:antialias=true",
                                     "-p", "$>",
                                     "-nb", "#282A36",
                                     "-nf", "#F8F8F2",

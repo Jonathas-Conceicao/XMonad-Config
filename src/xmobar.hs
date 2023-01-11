@@ -47,8 +47,10 @@ config = defaultConfig
   , overrideRedirect = True
 
   -- WeatherX uses ICAO code, remeber to update the template call too
-  -- [("SBPK", "Pelotas - RS"), ("SBAR", "Aracaju - SE")]
-  , commands = [ Run $ WeatherX "SBPK"
+  -- [ ("SBPK", "Pelotas - RS")
+  -- , ("SBAR", "Aracaju - SE")
+  -- , ("SABE", "Buenos Aires - Argentina")]
+  , commands = [ Run $ WeatherX "SABE"
                  [ ("clear", "Clear")
                  , ("sunny", "Sunny")
                  , ("mostly clear", "M-Clear")
@@ -61,7 +63,7 @@ config = defaultConfig
                  , ("mostly cloudy", "M-Cloudy")
                  , ("considerable cloudiness", "Raining")
                  ]
-                 (["--template", "Satolep: <tempC>°C <skyConditionS> <rh>%  <windKmh>km/h"]
+                 (["--template", "BA: <tempC>°C <skyConditionS> <rh>%  <windKmh>km/h"]
                    ++ addHiLo "18" "25")
                  18000
 
