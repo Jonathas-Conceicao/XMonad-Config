@@ -5,10 +5,13 @@
 import Control.Concurrent (threadDelay)
 import Control.Concurrent.Async (race)
 import Control.Monad.Extra (liftMaybe)
-import Data.Maybe (fromJust)
+import Data.Maybe (fromJust, fromMaybe)
 import Graphics.X11.Xlib
 import Graphics.X11.Xlib.Extras (fetchName, queryTree)
-import Sound.ALSA.Mixer
+import Sound.ALSA.Mixer ( Control, Channel(FrontLeft)
+                        , getChannel, getControlByName, getRange
+                        , playback, switch, value, volume, withMixer
+                        )
 import System.Environment (getArgs)
 import System.Exit (ExitCode (..), exitWith)
 import System.Mem.Weak (addFinalizer)
@@ -44,17 +47,25 @@ drawBar mode = do
   where
     loop dpy win gc font pixmap = do
       cur_info <- modeFunction mode
-      drawInWin dpy win gc font pixmap (modeIcon mode) cur_info
+      icon <- modeIcon mode
+      drawInWin dpy win gc font pixmap icon cur_info
       sync dpy False
-      res <- race (waitChange cur_info) timeout
+      -- FIXME: this can be optimized to make use of the values
+      -- returned by the watch races
+      res <- race (dataChange cur_info) $ race (iconChange icon) timeout
       case res of
-        Left _ -> loop dpy win gc font pixmap
-        Right _ -> return ()
-    waitChange cur = do
+        Right (Right _) -> return ()
+        _ -> loop dpy win gc font pixmap
+    dataChange cur = do
       new <- modeFunction mode
       if cur /= new
         then return ()
-        else threadDelay (300 * 1000) >> waitChange cur
+        else threadDelay (300 * 1000) >> dataChange cur
+    iconChange cur = do
+      new <- modeIcon mode
+      if cur /= new
+        then return ()
+        else threadDelay (300 * 1000) >> iconChange cur
     timeout = threadDelay (3 * 1000000)
 
 alreadyOpen :: Display -> [Window] -> IO Bool
@@ -67,9 +78,20 @@ modeFunction :: Mode -> IO Integer
 modeFunction Brightness = brightnessInfo
 modeFunction Media = mediaInfo
 
-modeIcon :: Mode -> FilePath
-modeIcon Brightness = "/home/jonathas/.xmonad/icons/bright.xbm"
-modeIcon Media = "/home/jonathas/.xmonad/icons/sound_8.xbm"
+modeIcon :: Mode -> IO FilePath
+modeIcon Brightness = pure "/home/jonathas/.xmonad/icons/bright.xbm"
+modeIcon Media = do
+  sw <- mediaSwitch
+  case sw of
+       True -> return "/home/jonathas/.xmonad/icons/sound_8.xbm"
+       False -> return "/home/jonathas/.xmonad/icons/sound_mute.xbm"
+
+mediaSwitch :: IO Bool
+mediaSwitch = withMixer "default" $ \mixer -> do
+  Just control <- getControlByName mixer "Master"
+  volumeStructure <- liftMaybe $ playback $ switch control
+  mswitch <- getChannel FrontLeft $ volumeStructure
+  return $ fromMaybe False mswitch
 
 mediaInfo :: IO Integer
 mediaInfo = withMixer "default" $ \mixer -> do
