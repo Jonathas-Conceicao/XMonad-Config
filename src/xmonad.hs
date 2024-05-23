@@ -128,8 +128,10 @@ myManageHook = composeAll
   [ placeHook simpleSmart
   , stringProperty "WM_WINDOW_ROLE" =? "pop-up" --> doFloat
   , stringProperty "WM_NAME" =? "Task Manager - Brave" --> doFloat
+  , stringProperty "_NET_WM_STATE" =? "_NET_WM_STATE_FULLSCREEN" --> doFloat
   , stringProperty "_NET_WM_STATE_ABOVE" =? "_NET_WM_STATE_FULLSCREEN" --> doFloat
   , className =? "Xmessage" --> doFloat
+  , className =? "feh" --> doFloat
   , manageDocks
   ]
 

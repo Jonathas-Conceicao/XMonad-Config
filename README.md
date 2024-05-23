@@ -11,7 +11,7 @@ Clone or link repository to ~/.xmonad:
 
 ```
 cd ~/.xmonad
-cabal v2-install xmonad-setup
+cabal v2-install xmonad-setup --overwrite-policy=always
 ```
 
 Launch:
