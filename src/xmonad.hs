@@ -7,7 +7,7 @@
 import XMonad ( xmonad, def, (<+>)
               , terminal, modMask, mod4Mask, composeAll
               , startupHook, manageHook, layoutHook
-              , logHook, handleEventHook )
+              , logHook, handleEventHook, io )
 import XMonad.Operations (windows, sendMessage, kill)
 import XMonad.StackSet (focusUp, focusDown, focusMaster)
 import XMonad.Layout (ChangeLayout ( NextLayout ))
@@ -51,6 +51,8 @@ import XMonad.Prompt ( XPConfig, XPPosition (Top)
 import XMonad.Prompt.FuzzyMatch ( fuzzyMatch )
 import XMonad.Prompt.XMonad ( xmonadPromptC )
 import XMonad.Prompt.ConfirmPrompt ( confirmPrompt )
+
+import System.Exit ( exitWith, ExitCode (ExitSuccess) )
 
 import JonathasConceicao.Volume
 import JonathasConceicao.Brightness
@@ -169,6 +171,10 @@ myXMonadCommands = do
 
              , ("kill-focused", kill)
 
+
+             , ("quit", confirm "Quit session now?" $
+                 safeSpawn "killall" ["--quit", "--ignore-case", "brave"] >>
+                 (io $ exitWith ExitSuccess))
              , ("reboot", confirm "Reboot now?" $
                  safeSpawn "killall" ["--quit", "--ignore-case", "brave"] >>
                  safeSpawn "shutdown" ["--reboot", "0"])
@@ -189,6 +195,10 @@ myXMonadCommands = do
 
 myKeys =
   [ ("M-x", myXMonadPrompt) -- Prompt for running XMonad commands
+
+  , ("M-S-q", confirm "Quit session now?" $
+      safeSpawn "killall" ["--quit", "--ignore-case", "brave"] >>
+      (io $ exitWith ExitSuccess))
 
   -- , ("M-S-p", )
   -- Runs dmenu with my config
