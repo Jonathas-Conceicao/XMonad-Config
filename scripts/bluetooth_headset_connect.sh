@@ -18,6 +18,7 @@ function notify_print() {
 }
 
 HEADSET_KNOWN_DEVICES=( "Edifier Headset W800BT"  "60:F4:3A:A2:44:67"
+                        "Kuba Disco"  "C4:6E:7B:2D:0E:BC"
                       )
 
 bluetoothctl power on || (notify_print "Unable to turn on bluetooth"; exit 1)
@@ -30,7 +31,7 @@ for (( i=0; $i < ${#HEADSET_KNOWN_DEVICES[@]}; i+=2 )); do
 
   bluetoothctl connect $dev
   if [ $? -eq 0 ]; then
-    notify_print "Successfully connected to $name($dev)"
+    notify_print "Successfully connected to $name ($dev)"
     exit 0
   fi
 done
