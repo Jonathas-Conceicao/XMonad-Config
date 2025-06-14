@@ -114,15 +114,7 @@ myHandleEventHook
   = (serverModeEventHookCmd' myXMonadCommands)
 
 myStartupHook = do
-  safeSpawn "picom"
-    [ "--backend", "glx"
-    , "--xrender-sync-fence"
-    , "--fading", "--fade-delta=3"
-    -- Opacity rules to set window transparency using WM_CLASS Property
-    , "--opacity-rule", "90:class_g='Alacritty'"
-    , "--opacity-rule", "90:class_g='Emacs'"
-    , "--opacity-rule", "90:class_g='XTerm'"
-    ]
+  safeSpawn "picom" ["--config", ".xmonad/res/picom.conf"]
 
   safeSpawn "dunst" []
 
