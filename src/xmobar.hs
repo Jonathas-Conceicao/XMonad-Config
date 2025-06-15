@@ -28,7 +28,7 @@ addLoHi = highAndLowParametersI curTheme
 
 config :: Config
 config = defaultConfig
-  { font = "xft:Bitstream DejaVu Sans Mono Book:size=9:bold:antialias=true"
+  { font = "Bitstream DejaVu Sans Mono Book Bold 12"
   , additionalFonts = []
   , borderColor = myBgColor
   , border = TopB
@@ -47,15 +47,17 @@ config = defaultConfig
   , overrideRedirect = True
 
   -- WeatherX uses ICAO code, remeber to update the template call too
-  -- [ ("SBPK", "Pelotas - RS")
-  -- , ("SBAR", "Aracaju - SE")
+  -- [ ("SBAR", "Aracaju - SE")
+  -- , ("SBPK", "Pelotas - RS")
+  -- , ("SBPA", "Porto Alegre - RS")
   -- , ("SABE", "Buenos Aires - Argentina")]
-  , commands = [ Run $ WeatherX "SABE"
+
+  , commands = [ Run $ WeatherX "SBPA"
                  [ ("clear", "Clear")
                  , ("sunny", "Sunny")
                  , ("mostly clear", "M-Clear")
-                 , ("mostly sunny", "M-sunny")
-                 , ("partly sunny", "P-sunny")
+                 , ("mostly sunny", "M-Sunny")
+                 , ("partly sunny", "P-Sunny")
                  , ("fair", "Fair")
                  , ("cloudy", "Cloudy")
                  , ("overcast", "Overcast")
@@ -63,7 +65,7 @@ config = defaultConfig
                  , ("mostly cloudy", "M-Cloudy")
                  , ("considerable cloudiness", "Raining")
                  ]
-                 (["--template", "BA: <tempC>°C <skyConditionS> <rh>%  <windKmh>km/h"]
+                 (["--template", "POA: <tempC>°C <skyConditionS> <rh>% <windKmh>km/h"]
                    ++ addHiLo "18" "25")
                  18000
 
@@ -136,7 +138,7 @@ config = defaultConfig
       ++ "| %UnsafeStdinReader% "
       ++ "} " ++ "%date%" `withColor` myE0Color
       ++ " (%uk_time%)" `withColor` myE0Color
-      ++ "{ %SBPK% "
+      ++ "{ %SBPA% " -- Update this if SBPA is changed
       ++ "| %battery% "
       ++ "| %dynnetwork% "
       ++ "| %bright% "
