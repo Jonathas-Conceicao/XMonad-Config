@@ -74,7 +74,7 @@ main = do
     def
     { modMask = mod4Mask -- Use Super instead of Alt
     , startupHook = myStartupHook
-    , manageHook = myManageHook <+> def manageHook
+    , manageHook = myManageHook <+> manageHook def
     , layoutHook = myLayoutHook
     , logHook = dynamicLogWithPP $ myXMobarHook xmobarPipe
     , handleEventHook = handleEventHook def <+> myHandleEventHook
