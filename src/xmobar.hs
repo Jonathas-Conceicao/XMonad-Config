@@ -6,7 +6,8 @@
 import JonathasConceicao.Xmobar
   ( ColorTheme(..), withColor
   , icon, xmobarXMonadCmd, draculaTheme
-  , highAndLowParameters, highAndLowParametersI
+  -- , highAndLowParameters, highAndLowParametersI
+  , highAndLowParameters
   )
 import Xmobar
 
@@ -24,7 +25,7 @@ myE0Color = extra0 curTheme
 
 addHiLo = highAndLowParameters curTheme
 
-addLoHi = highAndLowParametersI curTheme
+-- addLoHi = highAndLowParametersI curTheme
 
 config :: Config
 config = defaultConfig
@@ -84,15 +85,15 @@ config = defaultConfig
                   ++ addHiLo "10" "50")
                  20
 
-               , Run $ Brightness
-                 (addHiLo "9" "42" ++
-                  [ "--template"
-                  , xmobarXMonadCmd 1 "bright-reset"
-                  $ xmobarXMonadCmd 4 "bright-up"
-                  $ xmobarXMonadCmd 5 "bright-down"
-                  $ icon "bright.xbm" ++ " <percent>%"
-                  , "--", "-D", "intel_backlight"])
-                 50
+               -- , Run $ Brightness
+               --   (addHiLo "9" "42" ++
+               --    [ "--template"
+               --    , xmobarXMonadCmd 1 "bright-reset"
+               --    $ xmobarXMonadCmd 4 "bright-up"
+               --    $ xmobarXMonadCmd 5 "bright-down"
+               --    $ icon "bright.xbm" ++ " <percent>%"
+               --    , "--", "-D", "intel_backlight"])
+               --   50
 
                , Run $ Volume
                  "default"
@@ -110,15 +111,15 @@ config = defaultConfig
                    ])
                  20
 
-               , Run $ Battery
-                 ( ["--template", "<acstatus> <left>%"]
-                 ++ addLoHi "10" "70"
-                 ++ [ "--"
-                    , "-O", icon "batt_on.xbm" ++ icon "batt.xbm"
-                    , "-i", icon "batt_idle.xbm" ++ icon "batt.xbm"
-                    , "-o", icon "batt.xbm"
-                    ]
-                 ) 600
+               -- , Run $ Battery
+               --   ( ["--template", "<acstatus> <left>%"]
+               --   ++ addLoHi "10" "70"
+               --   ++ [ "--"
+               --      , "-O", icon "batt_on.xbm" ++ icon "batt.xbm"
+               --      , "-i", icon "batt_idle.xbm" ++ icon "batt.xbm"
+               --      , "-o", icon "batt.xbm"
+               --      ]
+               --   ) 600
 
                , Run $ DynNetwork
                  (["--template", (icon "wifi_8.xbm") ++ " <rx>*<tx>"]
@@ -126,7 +127,7 @@ config = defaultConfig
                  ) 20
 
                , Run $ DateZone "%A - %d %b(%m) %Y - %H:%M:%S" "" "" "date" 10
-               , Run $ DateZone "%H:%M:%S" "" "Europe/London" "uk_time" 10
+               -- , Run $ DateZone "%H:%M:%S" "" "Europe/London" "uk_time" 10
 
                , Run $ UnsafeStdinReader
                ]
@@ -137,11 +138,11 @@ config = defaultConfig
       ++ xmobarXMonadCmd 1 "workspace-free" (icon "Fedora_Icon.xbm")
       ++ "| %UnsafeStdinReader% "
       ++ "} " ++ "%date%" `withColor` myE0Color
-      ++ " (%uk_time%)" `withColor` myE0Color
+      -- ++ " (%uk_time%)" `withColor` myE0Color
       ++ "{ %SBPA% " -- Update this if SBPA is changed
-      ++ "| %battery% "
+      -- ++ "| %battery% "
       ++ "| %dynnetwork% "
-      ++ "| %bright% "
+      -- ++ "| %bright% "
       ++ "| %default:Master% "
       ++ "| %cpu% "
       ++ "| %memory% * %swap% "
