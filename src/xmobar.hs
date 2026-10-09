@@ -28,7 +28,7 @@ addLoHi = highAndLowParametersI curTheme
 
 config :: Config
 config = defaultConfig
-  { font = "Bitstream DejaVu Sans Mono Book Bold 12"
+  { font = "DejaVu Sans Mono Bold 9"
   , additionalFonts = []
   , borderColor = myBgColor
   , border = TopB
@@ -66,6 +66,7 @@ config = defaultConfig
                  , ("considerable cloudiness", "Raining")
                  ]
                  (["--template", "POA: <tempC>°C <skyConditionS> <rh>% <windKmh>km/h"]
+--                 (["--template", "AJU: <tempC>°C <skyConditionS> <rh>% <windKmh>km/h"]
                    ++ addHiLo "18" "25")
                  18000
 
@@ -126,7 +127,7 @@ config = defaultConfig
                  ) 20
 
                , Run $ DateZone "%A - %d %b(%m) %Y - %H:%M:%S" "" "" "date" 10
-               , Run $ DateZone "%H:%M:%S" "" "Europe/London" "uk_time" 10
+               -- , Run $ DateZone "%H:%M:%S" "" "Europe/London" "uk_time" 10
 
                , Run $ UnsafeStdinReader
                ]
@@ -137,7 +138,7 @@ config = defaultConfig
       ++ xmobarXMonadCmd 1 "workspace-free" (icon "Fedora_Icon.xbm")
       ++ "| %UnsafeStdinReader% "
       ++ "} " ++ "%date%" `withColor` myE0Color
-      ++ " (%uk_time%)" `withColor` myE0Color
+      -- ++ " (%uk_time%)" `withColor` myE0Color
       ++ "{ %SBPA% " -- Update this if SBPA is changed
       ++ "| %battery% "
       ++ "| %dynnetwork% "

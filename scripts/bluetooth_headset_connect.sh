@@ -19,6 +19,7 @@ function notify_print() {
 
 HEADSET_KNOWN_DEVICES=( "Edifier Headset W800BT"  "60:F4:3A:A2:44:67"
                         "Kuba Disco"  "C4:6E:7B:2D:0E:BC"
+                        "QCY H3 Pro"  "84:AC:60:DB:CD:90"
                       )
 
 bluetoothctl power on || (notify_print "Unable to turn on bluetooth"; exit 1)
